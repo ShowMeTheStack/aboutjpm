@@ -1,0 +1,278 @@
+{
+ "patents": [
+  {
+   "inventors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "applicant": "BITS Pilani",
+   "office": "Indian Patent Office",
+   "status": "Published patent application (not yet granted)",
+   "kind": "Indian patent application, Complete Specification (Form 2, Section 10, Patents Act 1970)",
+   "id": "dfi-monitor",
+   "title": "Hardware data-flow integrity monitor with register-file provenance tagging for RISC-V IoT processors",
+   "applicationNo": "202631036811",
+   "publicationNo": "IN202631036811 A1",
+   "glance": "A 4-bit origin tag on every RISC-V register, checked in hardware before the value can steer a branch or a store.",
+   "problem": "Many attacks on IoT devices do not hijack control flow at all. They corrupt data: an untrusted input ends up as a store address, a branch target or a key, or a spoofed sensor value is used as if it had been validated. Control-flow integrity, memory tagging and pointer authentication do not track where a value came from, and software data-flow integrity costs too much on a small core.",
+   "why": "The thesis showed that defences for small RISC-V cores must be cheap enough to leave on all the time. Existing hardware protects only control flow or memory safety, so there was no always-on mechanism that tracks the provenance of data at the register level and enforces how data of a given origin may be used.",
+   "approach": "Every architectural register gets a small companion tag that records where its value came from, for example sensor-raw, sensor-validated, constant, computed, pointer, crypto-key, control or tainted (16 classes in 4 bits). When an instruction retires, a propagation unit computes the destination tag from the source tags using a programmable rules table. Loads take their tag from an address-region map, so data read from a sensor or an untrusted buffer is tagged automatically. A policy unit checks the tag whenever a register is used in a sensitive place (branch target, store address, CSR write, crypto operand) and raises a violation if that origin is not allowed there. The monitor runs beside the pipeline, so instructions that do not violate a policy pay no extra latency.",
+   "claims": [
+    "A RISC-V processor with a provenance tag file holding a multi-bit tag for each integer register.",
+    "A tag propagation unit that sets the destination tag at retirement from the instruction type, the source tags and a programmable propagation rules table (an SRAM indexed by operation class and the two source tags).",
+    "An address-tag mapping table of base, mask and tag entries that tags loaded data by its source address.",
+    "A policy enforcement unit that checks tags in security-relevant contexts and raises a violation; tag work runs in parallel with execute and decode, so non-violating instructions see no added latency.",
+    "Corresponding method and IoT system-on-chip claims."
+   ],
+   "results": [
+    "230 LUTs (0.43% of the XC7Z020), 428 flip-flops, 0 BRAM, 0 DSP for 32 tags and 4 address regions.",
+    "Fmax 139.4 MHz, above the 86 MHz Konark-V core clock, so the monitor never limits the core.",
+    "0.106 W total on-chip power, of which 4 mW is dynamic.",
+    "0 cycles of added latency on non-violating instructions and 0 cycles from taint to trap; about 29 pJ per instruction (derived).",
+    "Validated on a control-data attack pattern: a tainted load used as a store address or branch target is flagged, and a clean register is not (no false positive)."
+   ],
+   "measurementPlatform": "Implemented in Chisel on Konark-V, the authors' own dual-hart RV32IM microcontroller (153/153 core tests pass), and placed and routed with Vivado 2020.1 on a Xilinx Zynq XC7Z020 (Zedboard). Numbers are Vivado post-route output; the patent specification describes a larger instance than the one measured.",
+   "abstract": "A hardware data-flow integrity monitor (DFIM) for RISC-V processors that provides register-file-level provenance tagging and policy enforcement. The DFIM comprises a Provenance Tag File (PTF) that maintains a 4-bit provenance tag for each architectural register, encoding classifications such as sensor-raw, constant, computed, pointer, crypto-key, and tainted. A Tag Propagation Unit (TPU) determines provenance tags for destination registers based on instruction type and source operand tags using a programmable Propagation Rules Table (PRT) and an Address-Tag Mapping Table (ATMT) that automatically assigns tags based on memory source addresses. A Policy Enforcement Unit (PEU) checks provenance tags against a programmable Policy Table when registers are used in security-relevant contexts including branch targets, store addresses, CSR writes, and cryptographic operations. The DFIM operates in parallel with normal pipeline execution, incurring zero additional latency for non-violating instructions, and requires less than 0.01 mm^2 silicon area. The invention enables detection and prevention of data-flow attacks, including data-oriented programming and sensor manipulation attacks, without software instrumentation overhead.",
+   "keywords": [
+    "RISC-V",
+    "data-flow integrity",
+    "provenance tagging",
+    "taint tracking",
+    "data-oriented programming",
+    "IoT security",
+    "hardware security monitor"
+   ],
+   "short": "Data-flow integrity monitor"
+  },
+  {
+   "inventors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "applicant": "BITS Pilani",
+   "office": "Indian Patent Office",
+   "status": "Published patent application (not yet granted)",
+   "kind": "Indian patent application, Complete Specification (Form 2, Section 10, Patents Act 1970)",
+   "id": "hpc-malware-classifier",
+   "title": "Hardware-accelerated microarchitectural event classifier with programmable feature extraction pipeline and on-chip ensemble inference engine for real-time malware detection in RISC-V processors",
+   "applicationNo": "202631036812",
+   "publicationNo": "IN202631036812 A1",
+   "glance": "A random-forest malware detector in the RISC-V chip that reads performance counters directly, with no software agent.",
+   "problem": "Hardware performance counters can tell malware from benign code, but every deployed detector reads them from software. That costs 2% to 15% of CPU time, samples only every 1 to 10 ms (so short attacks fall between samples), and runs as software that malware can disable or evade by timing camouflage instructions to the sampling points.",
+   "why": "My doctoral work on hardware-assisted malware detection found that the weak point of counter-based detection is the software pipeline, not the idea. Moving capture, feature extraction and classification into hardware removes the overhead, the sampling gaps and the software attack surface at once.",
+   "approach": "A capture unit taps the performance counters through a private port, so it does not use the normal CSR read path, and produces an event-count vector per time window. A five-stage fixed-point pipeline computes mean, variance, skewness, kurtosis and entropy for each event. A random forest of decision trees, stored in programmable on-chip SRAM, is walked in parallel by one traversal unit per tree, and a majority vote gives the verdict. A resilience monitor uses CUSUM change detection and an instruction-to-event consistency check to spot malware that tries to disguise its counter profile. A Linux kernel module loads trained models and acts on verdicts; retraining only reloads the tree tables.",
+   "claims": [
+    "A classifier with a direct event-tap capture unit (shadow accumulators and per-window difference calculator) independent of the CSR read port.",
+    "A pipelined fixed-point feature engine computing mean, variance, skewness, kurtosis and entropy.",
+    "An SRAM-based tree memory with parallel tree traversal units and a majority-vote aggregator, loaded through a CSR interface (for example 64 trees of depth up to 7 traversed in 7 cycles).",
+    "An adversarial resilience monitor and a per-process context tracker that tags each event vector with a process identifier.",
+    "Method claims and a RISC-V SoC claim with a Linux kernel security module."
+   ],
+   "results": [
+    "Measured instance: 4 trees x 16 nodes, depth 3, 8 features. 1,542 LUTs (2.9%), 1,869 flip-flops, 0 BRAM, 0 DSP.",
+    "Fmax 55.7 MHz; one classification per cycle, i.e. 17.9 ns per verdict and 55.7 million verdicts per second (derived).",
+    "0.116 W total, 13 mW dynamic; about 233 pJ per classification (derived).",
+    "Validated on five counter snapshots: multi-level traversal, per-tree votes and majority voting behave as programmed, with no false positive on the low-counter snapshot."
+   ],
+   "measurementPlatform": "Implemented in Chisel on Konark-V, the authors' own dual-hart RV32IM microcontroller (153/153 core tests pass), and placed and routed with Vivado 2020.1 on a Xilinx Zynq XC7Z020 (Zedboard). Numbers are Vivado post-route output; the patent specification describes a larger instance than the one measured.",
+   "abstract": "A hardware-accelerated malware detection system (100) for RISC-V processors comprising a Continuous Event Capture Unit (200) that monitors Hardware Performance Counter values through a direct hardware tap interface at cycle-level granularity, a Pipelined Feature Extraction Engine (300) implementing a five-stage hardware pipeline computing mean, variance, skewness, kurtosis, and Shannon entropy from event count windows using fixed-point arithmetic, an On-Chip Ensemble Inference Engine (400) implementing a Random Forest classifier with 64 parallel decision trees stored in programmable SRAM and traversed simultaneously by dedicated Tree Traversal Units (420) with majority vote aggregation (430), and an Adversarial Resilience Monitor (500) using CUSUM change-point detection (510) and instruction-event correlation analysis (520) to detect attempts to manipulate HPC profiles. The system achieves zero CPU overhead, microsecond-level detection latency, and continuous monitoring without software sampling gaps. A Linux Kernel Security Module (600) loads trained models, configures detection parameters, handles detection interrupts, and enforces configurable response policies. The invention provides tamper-resistant malware detection suitable for resource-constrained IoT deployments on RISC-V processors. (Figure 1)",
+   "keywords": [
+    "RISC-V",
+    "malware detection",
+    "hardware performance counters",
+    "random forest",
+    "on-chip machine learning",
+    "adversarial evasion",
+    "IoT security"
+   ],
+   "short": "On-chip malware classifier"
+  },
+  {
+   "inventors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "applicant": "BITS Pilani",
+   "office": "Indian Patent Office",
+   "status": "Published patent application (not yet granted)",
+   "kind": "Indian patent application, Complete Specification (Form 2, Section 10, Patents Act 1970)",
+   "id": "peripheral-crypto-engine",
+   "title": "Per-peripheral cryptographic session engine with hardware key rotation for RISC-V IoT system-on-chip",
+   "applicationNo": "202631036813",
+   "publicationNo": "IN202631036813 A1",
+   "glance": "Encrypts on-chip bus traffic to each peripheral with its own key, and rotates keys in hardware without the CPU.",
+   "problem": "Inside a system-on-chip, data between the processor and peripherals (ADCs, sensors, crypto accelerators, secure storage) travels in plaintext. Bus probing, fault injection, an open JTAG or debug port, or a hardware Trojan can read it directly. TrustZone, PMP and SiFive Shield isolate software but do not encrypt the internal bus, and none give each peripheral its own key.",
+   "why": "The thesis studies how hardware leaks secrets on small RISC-V systems, including memory encryption. The internal bus was the remaining plaintext path. A lightweight, single-cycle cipher makes it possible to encrypt that path at bus speed, and doing key rotation in hardware removes it as something software can forget or be tricked into skipping.",
+   "approach": "A key-slot register file holds a separate 128-bit session key and transaction counter for each peripheral channel; firmware loads the keys at secure boot and software cannot read them back. Each bus transaction is encrypted with PRINCE, a low-latency 64-bit block cipher, using the channel key with the transaction counter as a tweak, so the same data never produces the same ciphertext twice. A key-rotation state machine watches each counter and, at a configured threshold, derives a new key by enciphering the old one and swaps it in atomically. Small decrypt and encrypt stubs next to each peripheral complete the channel. Compromise of one channel's key does not expose the others.",
+   "claims": [
+    "A RISC-V SoC with a per-peripheral cryptographic session engine on the internal bus and a key-slot register file of per-channel keys, counters and configuration bits.",
+    "A lightweight block cipher (PRINCE) performing single-cycle encryption and decryption with the transaction counter as a tweak.",
+    "An autonomous key-rotation finite state machine that derives and commits new keys when a channel's counter crosses its threshold, without processor involvement.",
+    "Peripheral-side cryptographic stubs and bus interception logic that select the key by target peripheral.",
+    "Method claims and a secure IoT SoC claim."
+   ],
+   "results": [
+    "PRINCE-64 core is bit-exact against all 5 published test vectors, in both a Scala reference model and the synthesised hardware.",
+    "Full 4-channel engine: 3,642 LUTs (6.85%), 752 flip-flops, 0 BRAM, 0 DSP; one unrolled cipher alone is 1,192 LUTs.",
+    "Fmax 38.7 MHz with a single-cycle, fully unrolled 12-round cipher (26.5 ns combinational path); 0.503 W total, 0.394 W dynamic.",
+    "Derived bus-encryption throughput 2.48 Gbit/s at about 159 pJ/bit (10.2 nJ per 64-bit block).",
+    "Waveform shows the key changing on its own as transactions accumulate and the rotation flag setting at the threshold."
+   ],
+   "measurementPlatform": "Implemented in Chisel on Konark-V, the authors' own dual-hart RV32IM microcontroller (153/153 core tests pass), and placed and routed with Vivado 2020.1 on a Xilinx Zynq XC7Z020 (Zedboard). Numbers are Vivado post-route output; the patent specification describes a larger instance than the one measured.",
+   "abstract": "A per-peripheral cryptographic session engine (PCSE) for RISC-V IoT System-on-Chip architectures provides cryptographic protection for internal bus communication between the processor core and peripheral interfaces. The PCSE maintains individual session keys for each peripheral channel in a key-slot register file, enabling cryptographic isolation where compromise of one channel does not expose data from other channels. A lightweight PRINCE block cipher engine performs single-cycle encryption and decryption of bus transactions using per-channel keys and transaction counter tweaks. An autonomous key rotation finite state machine monitors transaction counts and derives new keys when configurable thresholds are reached, without processor involvement. Peripheral-side cryptographic stubs complete the encrypted communication channel. The invention addresses security gaps in existing architectures where internal bus traffic travels in plaintext, protecting against side-channel probing, fault injection, and debug port exploitation. The compact implementation requires less than 0.03 square millimeters and less than 200 microwatts, suitable for resource-constrained IoT applications including medical devices, smart meters, and automotive systems.",
+   "keywords": [
+    "RISC-V",
+    "SoC bus encryption",
+    "PRINCE cipher",
+    "key rotation",
+    "per-peripheral isolation",
+    "IoT security",
+    "hardware cryptography"
+   ],
+   "short": "Per-peripheral crypto engine"
+  },
+  {
+   "inventors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "applicant": "BITS Pilani",
+   "office": "Indian Patent Office",
+   "status": "Published patent application (not yet granted)",
+   "kind": "Indian patent application, Complete Specification (Form 2, Section 10, Patents Act 1970)",
+   "id": "trace-bdt-detector",
+   "title": "On-chip binary decision tree inference engine integrated with RISC-V trace encoder for real-time IoT security monitoring",
+   "applicationNo": "202631036814",
+   "publicationNo": "IN202631036814 A1",
+   "glance": "Turns the RISC-V trace encoder from a passive recorder into an on-chip detector for ROP and control-flow hijacking.",
+   "problem": "RISC-V trace encoders (N-Trace, E-Trace) already see every branch, return and exception, but they only record and export it for offline analysis. Attacks such as return-oriented programming, code injection and control-flow hijacking finish long before external analysis can respond. ARM PAC and Intel CET do not exist on RISC-V, and software CFI is too heavy for IoT cores.",
+   "why": "The execution evidence needed to catch these attacks is already on the chip, in the trace path. The gap was that nothing analysed it in place. A small decision tree is cheap enough to evaluate in hardware every cycle, which gives detection without new instrumentation.",
+   "approach": "A feature extractor reads trace packets and keeps running counts over a sliding window of recent instructions: branch frequency, return-address consistency, instruction mix, indirect-jump target spread and interrupt rate, each quantised to 4 bits. A pre-trained binary decision tree in a small on-chip SRAM is walked node by node over these features and gives a classification within eight clock cycles. An alert controller with a confidence accumulator (several anomalous verdicts in a row before a severe response) can log, raise a non-maskable interrupt, halt into debug, or inject an alert into the trace stream. Only machine mode can update the model.",
+   "claims": [
+    "A RISC-V processor with an anomaly detection engine coupled to the trace encoder output, including a trace feature extractor.",
+    "A binary decision tree inference unit with node words (leaf flag, feature selector, threshold, child pointers, class) in on-chip SRAM, giving a classification in a bounded number of cycles.",
+    "An alert and response controller with a confidence accumulator and configurable responses (log, NMI, debug halt, trace injection).",
+    "Machine-mode-only CSR interface for secure model updates.",
+    "Method claims and an IoT SoC claim."
+   ],
+   "results": [
+    "Measured instance: 16-commit sliding window and 16-node tree. 307 LUTs (0.58%), 405 flip-flops, 0 BRAM, 0 DSP.",
+    "Fmax 70.6 MHz; inspects every committed instruction. 0.110 W total, 7 mW dynamic.",
+    "ROP burst detected after 13 commits (about 184 ns) with 0 false positives in the test traces.",
+    "The anomaly clears once benign instructions push the burst out of the window, which shows the O(1) sliding-window subtract works."
+   ],
+   "measurementPlatform": "Implemented in Chisel on Konark-V, the authors' own dual-hart RV32IM microcontroller (153/153 core tests pass), and placed and routed with Vivado 2020.1 on a Xilinx Zynq XC7Z020 (Zedboard). Numbers are Vivado post-route output; the patent specification describes a larger instance than the one measured. The measured version extracts features from the commit stream rather than from encoded trace packets.",
+   "abstract": "An Anomaly Detection Engine (ADE) integrated with a RISC-V trace encoder for real-time security monitoring in Internet-of-Things devices. The ADE comprises a Trace Feature Extractor that derives behavioral metrics including branch frequency, return address consistency, instruction mix distribution, jump target dispersion, and interrupt frequency from execution trace packets. A Binary Decision Tree Inference Unit stores a pre-trained decision tree in on-chip SRAM and traverses the tree using extracted features to produce security classifications within eight clock cycles. An Alert and Response Controller generates configurable responses including logging, non-maskable interrupts, debug halt, or trace stream injection based on classification results and a confidence accumulator that prevents false-positive alerts. Machine-mode control registers enable secure model updates for adapting to evolving threats. The invention achieves sub-microsecond detection latency with less than 0.015 mm^2 area overhead and 20-100 uW power consumption at 100 MHz, enabling practical deployment in resource-constrained IoT devices.",
+   "keywords": [
+    "RISC-V",
+    "trace encoder",
+    "decision tree",
+    "return-oriented programming",
+    "control-flow hijacking",
+    "anomaly detection",
+    "IoT security"
+   ],
+   "short": "Trace-encoder decision tree"
+  },
+  {
+   "inventors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "applicant": "BITS Pilani",
+   "office": "Indian Patent Office",
+   "status": "Published patent application (not yet granted)",
+   "kind": "Indian patent application, Complete Specification (Form 2, Section 10, Patents Act 1970)",
+   "id": "tiered-memory-thunderbolt",
+   "title": "RISC-V processor architecture with tiered-memory ISA extension, tier-aware translation lookaside buffer, and Thunderbolt-attached external DRAM expansion with RISC-V bridge controller for Linux-based heterogeneous memory systems",
+   "applicationNo": "202631036815",
+   "publicationNo": "IN202631036815 A1",
+   "glance": "ISA instructions and hardware page migration that let a RISC-V machine use Thunderbolt-attached DRAM as a memory tier.",
+   "problem": "Workloads such as LLM inference, virtual machines and EDA often need more memory than a consumer machine has. CXL memory expansion exists only on server processors. Linux can tier memory, but page migration is done in software (unmap, copy 4 KB through the CPU, update page tables, flush TLBs), which is too slow for a high-latency external tier. No ISA has instructions that know about memory tiers.",
+   "why": "RISC-V's custom opcode space, reserved page-table bits and custom CSRs make it possible to put tier awareness into the ISA itself. Thunderbolt 5 offers 80 Gbps on consumer hardware but had not been used for DRAM expansion with NUMA integration.",
+   "approach": "Layer 1 is an ISA extension, Xmtier, with tier-aware loads and stores (LD.TIER, SD.TIER), a page-migration instruction (MIGRATE), a tier statistics instruction (TIERSTAT) and a load-wait instruction (LWAIT). The TLB gains a 2-bit tier field per entry so the load/store unit can adapt to slow memory, an asynchronous load queue lets slow-tier loads proceed without stalling the core, and a hardware engine moves pages between tiers and shoots down TLB entries when done. Layer 2 is an external Thunderbolt enclosure built around a RISC-V bridge controller with custom DDR5 instructions, a latency-hiding cache with firmware prefetch and a write-snoop invalidation protocol for coherence without CXL. Layer 3 is a Linux kernel module that registers the external DRAM as a NUMA node and handles hot-plug.",
+   "claims": [
+    "A RISC-V processor with the Xmtier tiered-memory ISA extension and a tier-aware TLB holding a tier field per entry.",
+    "An asynchronous load queue for non-blocking access to high-latency tiers and a hardware page migration engine with automatic TLB shootdown.",
+    "A RISC-V SoC bridge controller for connecting external DRAM over Thunderbolt or USB4, with custom DDR5 command instructions and a latency-compensating cache.",
+    "A Linux kernel integration module for ACPI SRAT/HMAT injection, NUMA node registration, hardware-accelerated migration and hot-plug.",
+    "The Xmtier encoding itself, in the RISC-V custom-1 opcode space."
+   ],
+   "results": [
+    "Measured scope is the on-chip control core only (tier table, heat-based migration, coldest-page eviction, pin instruction, async load queue), not the Thunderbolt device or kernel layers.",
+    "8 pages, fast-tier capacity 2, 4-slot queue: 144 LUTs (0.27%), 71 flip-flops, 0 BRAM, 0 DSP; Fmax 86.4 MHz; 0.105 W total, 2 mW dynamic.",
+    "Average access latency 2.40x lower than without tiering (6.00 to 2.50 cycles, 70% fast-tier hits) over an 80-access simulated trace.",
+    "Validated hot-page promotion, correct coldest-page eviction and out-of-order completion of a fast load ahead of an outstanding slow load."
+   ],
+   "measurementPlatform": "Implemented in Chisel on Konark-V, the authors' own dual-hart RV32IM microcontroller (153/153 core tests pass), and placed and routed with Vivado 2020.1 on a Xilinx Zynq XC7Z020 (Zedboard). Numbers are Vivado post-route output; the patent specification describes a larger instance than the one measured.",
+   "abstract": "A three-layer architecture for heterogeneous memory systems comprising: (1) a RISC-V ISA extension (Xmtier) defining tier-aware load/store instructions (LD.TIER, SD.TIER), a hardware page migration instruction (MIGRATE), a tier statistics instruction (TIERSTAT), and a load-wait instruction (LWAIT), with a tier-aware TLB (700) extending page table entries with a tier field, an asynchronous load queue (800) for non-blocking high-latency memory access, and a hardware page migration engine (900) that substantially accelerates page migration compared to software; (2) a Thunderbolt-attached external DRAM expansion device built around a RISC-V bridge controller SoC (200) with custom DDR5 instructions (DDRSEQ, DDRREFRESH, DDRTRAIN), a latency-compensating cache (300) with a write-snoop invalidation protocol (WSIP) for cache coherence and firmware-driven prefetch, and DDR5 memory module interfaces; and (3) a Linux kernel module (400) leveraging the Xmtier extension for dynamic ACPI SRAT/HMAT injection, NUMA node registration, hardware-accelerated page migration, and hot-plug lifecycle management. Multi-port Thunderbolt bandwidth aggregation (500) increases aggregate bandwidth by address-interleaved striping across multiple ports. The invention enables RISC-V processors to transparently utilise Thunderbolt-attached DRAM for memory-intensive workloads with ISA-level support for heterogeneous memory tiering. (Figure 1)",
+   "keywords": [
+    "RISC-V",
+    "ISA extension",
+    "memory tiering",
+    "NUMA",
+    "TLB",
+    "page migration",
+    "Thunderbolt",
+    "DRAM expansion",
+    "Linux kernel"
+   ],
+   "short": "Tiered memory over Thunderbolt"
+  },
+  {
+   "inventors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "applicant": "BITS Pilani",
+   "office": "Indian Patent Office",
+   "status": "Published patent application (not yet granted)",
+   "kind": "Indian patent application, Complete Specification (Form 2, Section 10, Patents Act 1970)",
+   "id": "instruction-fusion-engine",
+   "title": "Programmable instruction fusion engine with SRAM-based rules table for RISC-V IoT processors",
+   "applicationNo": "202631036816",
+   "publicationNo": "IN202631036816 A1",
+   "glance": "Macro-op fusion whose rules live in a small SRAM table, so a shipped chip can be retuned for each workload.",
+   "problem": "Macro-op fusion (for example LUI+ADDI into one 32-bit constant load) saves pipeline slots and energy, but in Intel, ARM, BOOM and commercial RISC-V cores the fusible pairs are hardwired. An IoT chip runs very different code (sensor filtering, cryptography, control loops, radio protocols) over a 5 to 10 year life, and a fixed rule set helps one workload and not the others.",
+   "why": "I wanted the benefit of fusion on small RISC-V cores without fixing the choice of patterns at tape-out. Storing rules in SRAM, written through CSRs, makes fusion a software decision, and banking the table lets each task bring its own rules.",
+   "approach": "A fusion detection unit sits between the fetch buffer and the decoder. Each rule entry in an SRAM table describes a pair of instructions (opcode and function-field masks), the register dependency required between them, and the fused micro-op to emit. Match logic compares the current pair against all rules in one cycle, a priority encoder picks one if several match, and a generator emits a single internal operation. A dependency check makes sure the second instruction really consumes the first one's result, so fusion never changes program meaning. The table is banked, and one CSR write switches banks at a context switch. A fusion counter supports profiling, and a constant-time mode can disable fusion for security-sensitive code.",
+   "claims": [
+    "A RISC-V processor with a fusion detection unit containing an SRAM-based rules table, parallel match logic and a fused micro-op generator.",
+    "A 48-bit rule entry format: opcode and function-field masks for both instructions, register dependency flags, fused micro-op type, latency hint, priority and enable bit.",
+    "A banked rules table switched in a single cycle by a CSR write, giving zero-overhead rule-set changes at context switches.",
+    "A register-dependency verification sub-unit and a fusion statistics counter readable through a CSR.",
+    "Method claims and an IoT SoC claim with firmware that programs the rules."
+   ],
+   "results": [
+    "64-entry rules table: 155 LUTs (0.29%), 406 flip-flops, 0 BRAM, 0 DSP; Fmax 196.6 MHz; 0.107 W total, 4 mW dynamic.",
+    "1.25x effective IPC on a 400-instruction array load-accumulate loop: 80 of 400 instructions fused (20%), 400 issue slots reduced to 320.",
+    "About 20 pJ per fusion decision (derived from dynamic power and Fmax).",
+    "Validated LUI+ADDI, AUIPC+ADDI and ADD+LD fusions in-stream; a programmed pair without the required data dependency is correctly not fused."
+   ],
+   "measurementPlatform": "Implemented in Chisel on Konark-V, the authors' own dual-hart RV32IM microcontroller (153/153 core tests pass), and placed and routed with Vivado 2020.1 on a Xilinx Zynq XC7Z020 (Zedboard). Numbers are Vivado post-route output; the patent specification describes a larger instance than the one measured.",
+   "abstract": "A programmable instruction fusion mechanism for RISC-V processors comprising a Fusion Detection Unit (120) positioned between a fetch buffer (115) and a decode unit (130). The Fusion Detection Unit includes an SRAM-based rules table (122) storing fusion rule entries that specify instruction patterns and register dependency requirements for fusible instruction pairs. A parallel match logic array (124) compares consecutive instruction pairs against all rule entries simultaneously in a single clock cycle. When a match is detected, a fused micro-operation generator (126) emits a single internal operation encoding both original instructions, reducing pipeline bandwidth and energy consumption. The SRAM-based storage enables runtime modification of fusion rules through a Control-and-Status Register interface without hardware changes. A banked rules table architecture supports zero-overhead switching between workload-specific fusion rule sets during context switches, making the invention particularly suitable for Internet-of-Things processors that execute diverse workloads including sensor processing, cryptography, and communication protocols. (Figure 1)",
+   "keywords": [
+    "RISC-V",
+    "macro-op fusion",
+    "instruction fusion",
+    "programmable decode",
+    "microarchitecture",
+    "IoT processors",
+    "energy efficiency"
+   ],
+   "short": "Instruction fusion engine"
+  }
+ ]
+}

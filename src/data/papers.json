@@ -1,0 +1,894 @@
+{
+ "papers": [
+  {
+   "id": "pace",
+   "title": "PACE: A Page-Adaptive, Cache-Anchored Memory Encryption Engine for RISC-V with Formally Verified nth-Order DPA Resistance",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "venue": "Chips, Vol. 5, Issue 3, Article 25",
+   "venueShort": "Chips",
+   "year": 2026,
+   "status": "published",
+   "dates": {
+    "received": "2026-06-25",
+    "revised": "2026-07-27",
+    "accepted": "2026-08-05",
+    "published": "2026-08-07"
+   },
+   "indexing": "ESCI",
+   "doi": "10.3390/chips5030025",
+   "url": "https://doi.org/10.3390/chips5030025",
+   "license": "CC BY (open access)",
+   "thesisChapter": "Chapter 5 (Defense)",
+   "glance": "An open RISC-V memory encryption engine whose masked key core is formally proven DPA resistant and runs on FPGA.",
+   "problem": "Main memory sits outside the processor's trust boundary, so cold boot attacks, bus interposers and malicious DMA can read or tamper with DRAM. Commodity chips answer this with in-line memory encryption. But the encryption engine then processes one long-lived key over attacker-influenced data at a fixed location, which is exactly the setting differential power analysis (DPA) exploits. If that key is recovered, all of memory is exposed at once.",
+   "why": "The open-hardware ecosystem had no memory encryption engine that is both co-designed with the cache hierarchy and hardened against side-channel analysis of the engine itself. Commercial engines (AMD SME/SEV, Intel TME/TDX, Arm CCA) are closed and do not expose or verify their side-channel posture. Integrity-tree research treats the cipher as a black box, and where masking is used it is rarely verified on the synthesized gate-level netlist under a glitch-aware model.",
+   "approach": "PACE is a TileLink adapter placed between the last-level cache and the memory port of a Rocket SoC built in Chipyard, written in Chisel. Per physical page it applies one of four policies (plaintext, confidentiality, confidentiality plus integrity, or additionally masking of order d), selected from RISC-V page table bits through a memory-mapped control plane programmed by the OS. Confidentiality uses counter mode, and the keystream for a line is precomputed while the line is still in the cache, so an eviction needs only an XOR. A single split counter serves as the counter-mode nonce, the anti-replay integrity version and the re-keying epoch. DPA resistance is layered: ISAP-style fresh re-keying limits each key to about one encryption (q close to 1), and domain-oriented masking with d+1 shares protects the one key-processing block, a masked Ascon-p S-box. The design was verified with three formal tools, attacked with simulated traces, and placed, routed and programmed on a Xilinx XC7Z020 FPGA with an on-chip ring-oscillator power sensor.",
+   "results": [
+    "Precomputing the keystream during cache residency cuts confidentiality-only writeback latency from 90 to 10 cycles (9x); with integrity, eviction latency falls from 320 to 10 cycles.",
+    "The masked Ascon-p S-box is proven order-d secure under a glitch- and transition-aware model by COCO, PROLEAD and SILVER at d = 1 and 2, and by COCO through d = 3.",
+    "Simulated-trace CPA recovers all 128 key bits from the unprotected core; with d = 1 masking, CPA falls to the random-guess rate and TVLA |t| stays near 1 (threshold 4.5) even at 8000 traces.",
+    "Measured trace-amplification exponents of 1.92, 3.70, 5.40 and 6.97 for d = 0 to 3 track the predicted 2(d+1) law (2, 4, 6, 8).",
+    "On in-order Rocket and out-of-order BOOM, application-level overhead is within measurement noise of plaintext for cache-resident workloads; Embench-IoT averages 2.3%, CoreMark and Dhrystone are within 0.06%, and memory-bound STREAM reaches 17%. Masking is cycle-identical to plain confidentiality.",
+    "On the XC7Z020 the d = 2 build places and routes at 12,175 LUTs and 16,088 flip-flops with timing met at 100 MHz; the unmasked engine plus sensor is about 1.2k LUTs."
+   ],
+   "contributions": [
+    "A page-adaptive, physical-address-indexed memory encryption engine for RISC-V with a memory-mapped control plane, validated in RTL on Rocket with zero-overhead bypass for plaintext pages.",
+    "Cache-anchored keystream precompute, a new mechanism that removes the cipher from the eviction-critical path.",
+    "A unified split counter that serves as nonce, integrity version and re-keying epoch, with tree-free Tier-A integrity and a live block-MAC Bonsai Merkle tree (Tier-B) for scale-out.",
+    "Netlist-level formal verification of the masked core by three independent glitch-aware tools, with a careful treatment of statistical versus exact verdicts.",
+    "An analytic side-channel model linking masking order, noise and re-keying to traces-to-disclosure, checked against simulated CPA, TVLA and a mutual-information sweep.",
+    "An open evaluation from simulation to FPGA silicon, including dual-core sharing, a Linux control-plane driver, an SP 800-90B-monitored TRNG and a JTAG-read TVLA campaign."
+   ],
+   "limitations": "The physical fixed-vs-random TVLA campaign on the FPGA exercises the full measurement path but, with an auto-placed sensor on a small engine, stays below the detection threshold (|t|max about 3.3). A co-placed sensor array and a larger trace campaign are needed for an on-silicon break-then-fix.",
+   "keywords": [
+    "memory encryption",
+    "side-channel analysis",
+    "differential power analysis",
+    "masking",
+    "domain-oriented masking",
+    "RISC-V",
+    "Rocket",
+    "Chipyard",
+    "Ascon",
+    "ISAP",
+    "counter mode",
+    "memory integrity",
+    "Bonsai Merkle tree",
+    "leakage-resilient cryptography"
+   ],
+   "abstract": "Main memory carries data outside the processor's trust boundary, so commodity systems-on-chip (SoCs) increasingly encrypt it; yet, in-line memory encryption engine itself becomes a differential power analysis (DPA) target whose key, if recovered, unlocks all of dynamic random-access memory (DRAM). We present PACE, a page-adaptive, cache-anchored memory encryption engine for RISC-V that makes nth-order DPA resistance practical and keeps cryptographic latency off the cache eviction critical path. PACE inserts a TileLink adapter between the last-level cache and the memory port and applies, per physical page, one of four policies (plaintext/confidentiality/confidentiality+integrity/+masking-order-d) selected from RISC-V page table bits through a memory-mapped control plane. Confidentiality uses counter mode whose per-line keystream is precomputed during cache residency; integrity is tree-free at the embedded operating point via on-chip counters and tags, with a live split counter block-MAC Bonsai Merkle tree for scale-out. DPA resistance is layered: ISAP-style fresh re-keying caps the data complexity per key at q ≈ 1, and domain-oriented masking (DOM, d + 1 shares) protects the sole key processing block to order d. We implement PACE in Chisel on a Rocket SoC (Chipyard) and evaluate it with open-source tooling. A deterministic TileLink-level harness proves ciphertext-in-memory and detects tamper/replay/splice, and the live Tier-B engine (DRAM counters and per-line message authentication codes (MACs) plus an on-chip-rooted block-MAC tree) is validated from end to end on full Rocket and BOOM SoCs and on the FPGA; the masked Ascon-p S-box is proven order-d secure (d = 1, 2) under a glitch- and transition-aware model by three independent formal tools (COCO, PROLEAD, and SILVER, the last also deciding the full composability lattice and confirming exact glitch-robust order-2 probing security), with COCO extending the exact verdict to the highest synthesized order d = 3 (secure at probing orders 1–3); a simulated trace correlation power analysis (CPA) recovers the full key from an unprotected core and is defeated by masking, with a mutual information analysis confirming the N ∝ σ^2(d+1) trace amplification law. We further realize PACE on field-programmable gate array (FPGA) silicon: the engine plus an on-chip ring oscillator power sensor is placed, routed, timing-closed at 100 MHz, and programmed on a Xilinx XC7Z020, and we drive a fixed-vs-random Test Vector Leakage Assessment (TVLA) campaign read back entirely over a JTAG (Joint Test Action Group). A multi-core configuration and a Linux control-plane driver are likewise validated. Across synthetic access patterns and named application kernels (AES, SHA-256, matrix multiplication, pointer chasing) on both in-order Rocket and out-of-order BOOM, application-level overhead is within measurement noise of plaintext for cache resident workloads (masking, in particular, is cycle-identical to plain confidentiality), and we characterize the cost of each policy, masking order, and re-keying interval, demonstrating side-channel-hardened memory encryption on open RISC-V hardware.",
+   "kind": "journal",
+   "thesis": true,
+   "impact": 1,
+   "short": "PACE"
+  },
+  {
+   "id": "archer",
+   "title": "ARCHER: A Cycle-Accurate RISC-V Emulator for Microarchitectural Side-Channel and Memory Encryption Research",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "venue": "Computers, Vol. 15, Issue 8, Article 479",
+   "venueShort": "Computers",
+   "year": 2026,
+   "status": "published",
+   "dates": {
+    "received": "2026-06-15",
+    "revised": "2026-07-22",
+    "accepted": "2026-07-23",
+    "published": "2026-07-28"
+   },
+   "indexing": "ESCI, Scopus Q1",
+   "doi": "10.3390/computers15080479",
+   "url": "https://doi.org/10.3390/computers15080479",
+   "license": "CC BY (open access)",
+   "artifact": {
+    "github": "https://github.com/jpmishrabits/archer-artifact",
+    "zenodoVersion": "https://doi.org/10.5281/zenodo.21468510",
+    "zenodoConcept": "https://doi.org/10.5281/zenodo.21449857",
+    "license": "MIT"
+   },
+   "thesisChapter": "Chapter 4 (Evaluation)",
+   "glance": "A fast RISC-V emulator with cycle-level caches and speculation that boots Linux in under three minutes for side-channel work.",
+   "problem": "Side-channel attacks such as Spectre, Meltdown and MDS leak data through caches, branch predictors, store buffers and speculative execution. Testing a defense against them needs a simulator that reproduces those timing effects, not only correct results. Fast functional tools (Spike, QEMU) model no caches or speculation, while gem5's detailed out-of-order model needs hours to boot Linux and has a 300,000+ line C++ codebase.",
+   "why": "No available tool combined the microarchitectural fidelity side-channel research needs, full operating-system boots in minutes, and a codebase simple enough to add new defenses quickly. Earlier defense studies each needed a separate gem5 fork with 2000 to 5000 lines of custom C++. The thesis needed large attack-by-defense sweeps, which was not practical with existing tools.",
+   "approach": "ARCHER is an RV64IMAFDC emulator written in C with four pluggable core types (scalar, in-order pipeline, superscalar out-of-order, SMT), 1 to 16 harts, MSI-coherent caches, store and fill buffers, and the full M/S/U privilege architecture with Sv39 and PMP. Every microarchitectural parameter is set at runtime from INI files, so design-space sweeps need no recompilation. It ships thirteen speculation policies: an unrestricted baseline, five published defenses (InvisiSpec, Delay, STT, CleanupSpec, Fence) and seven new ones in three mechanism families. Its cycle model was checked against gem5 and against Chipyard's Verilator-simulated Rocket and BOOM RTL. A bus-layer engine, AMES, adds authenticated memory encryption with four ciphers and per-leaf mask-XOR hardening against power analysis.",
+   "results": [
+    "Boots Linux 6.6 with OpenSBI in under three minutes and runs 3.7x faster (geometric mean) than gem5's DerivO3CPU on head-to-head bare-metal microbenchmarks.",
+    "Matches Chipyard's fab-ready Rocket and BOOM RTL to a mean 9.4% (median 9.1%) cycle-count deviation across a 20-cell workload-by-core matrix, at a median 88x host-throughput advantage over Verilator.",
+    "Produces bit-identical architectural output to QEMU.",
+    "Reproduces ten attacks (Spectre v1/v2/RSB/BHB, Meltdown-US, L1TF, Fallout, RIDL, prefetch and SMT channels); the classical defenses drive leakage from 100% to 0% at under 0.3% IPC loss on a full Linux boot.",
+    "Of the seven new policies, AKTO, CRPSO and LFBCO close all five classical Spectre variants, PSF closes four and DLRF two; ROPC and MDPO close the RSB and AES T-table cache-timing cases they target.",
+    "AMES runs 924 parameter-shape points with zero integrity failures; mask-XOR moves first-order CPA from full-key recovery at 1000 traces to no recovery at 100,000 traces for any d >= 1."
+   ],
+   "contributions": [
+    "A cycle-accurate RV64IMAFDC emulator with pluggable core types, coherent caches and full privilege architecture, configured at runtime through INI files.",
+    "End-to-end reproduction of ten microarchitectural attacks across fifteen defense configurations on Linux 6.6, with statistical evidence of leakage and suppression.",
+    "Seven new speculation-defense policies (AKTO, CRPSO, DLRF, LFBCO, MDPO, PSF, ROPC) across issue-gate, predictive-redirect and selective-cleanup families.",
+    "Calibration against Chipyard RTL for Rocket and BOOM, and family-level Flush+Reload fidelity across four Chipyard configurations (HIT peaks within one cycle on every cell).",
+    "AMES, a bus-layer memory encryption engine with AES-128-GCM, ASCON-128, PRINCE-64 and QARMA-64 (each checked by known-answer tests), a hierarchical key tree and configurable integrity-tree arity.",
+    "A public reproducibility artifact (sources, configs, workloads, per-figure scripts) under the MIT license."
+   ],
+   "keywords": [
+    "RISC-V",
+    "cycle-accurate emulation",
+    "side-channel attacks",
+    "Spectre",
+    "Meltdown",
+    "memory encryption",
+    "microarchitectural security",
+    "cache timing",
+    "differential power analysis",
+    "Chipyard",
+    "Rocket",
+    "BOOM"
+   ],
+   "abstract": "Microarchitectural side-channels leak data through caches, branch predictors, store buffers, and speculative execution. Evaluating defenses at cycle-model fidelity has forced a choice between functional tools (Spike, QEMU) and gem5's hours-long Linux boots. ARCHER is a cycle-model-relative RV64IMAFDC RISC-V emulator with pluggable superscalar out-of-order execution, coherent caches, simultaneous multithreading, 1 to 16 harts, and thirteen speculation policies: an unrestricted baseline plus five classical defenses and seven new defenses spanning issue-gate, predictive-redirect, and selective-cleanup mechanism families. It boots Linux 6.6 in under three minutes, runs 3.7× faster (geometric mean) than gem5's DerivO3CPU on head-to-head bare-metal microbench, matches gem5 within ±20% on 4 of 10 workloads, matches Chipyard's fab-ready RTL to a 9.4% mean cycle-count deviation under two fitted match-configurations, and produces bit-identical architectural output to QEMU at a median 88× host-throughput advantage over Chipyard's Verilator flow. Every published Spectre-family defense drives leakage to zero at sub-0.3% instructions-per-cycle (IPC) loss on a full Linux boot, and each new policy is validated on the attack surface its mechanism defends. The Adaptive Memory Encryption Scheme (AMES) adds a bus-layer engine with four authenticated ciphers (each validated bit-exact against its published specification) and per-leaf mask-XOR for Differential Power Analysis (DPA) hardening; a first-order Correlation Power Analysis consistency check confirms the direction of the theoretical bound under the shipped leakage model. Together, ARCHER and AMES provide a single INI-configurable environment for cycle-model side-channel evaluation in minutes rather than hours.",
+   "kind": "journal",
+   "thesis": true,
+   "impact": 2,
+   "short": "ARCHER"
+  },
+  {
+   "id": "novel-riscv-sca",
+   "title": "Novel Microarchitectural Side-Channel Attacks on Open-Source RISC-V Cores",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "venue": "Chips, Vol. 5, Issue 3, Article 29",
+   "venueShort": "Chips",
+   "year": 2026,
+   "status": "published",
+   "dates": {
+    "received": "2026-06-10",
+    "revised": "2026-08-17",
+    "accepted": "2026-08-26",
+    "published": "2026-09-17"
+   },
+   "indexing": "ESCI",
+   "doi": "10.3390/chips5030029",
+   "url": "https://doi.org/10.3390/chips5030029",
+   "license": "CC BY (open access)",
+   "thesisChapter": "Chapter 3 (Discovery)",
+   "glance": "23 side channels measured on six open RISC-V cores, six of them new and RISC-V-specific, confirmed on FPGA and mitigated.",
+   "problem": "RISC-V is now in commercial SoCs, accelerators and embedded controllers, but it has features with no x86 or ARM counterpart: Physical Memory Protection (PMP), write-any-read-legal (WARL) configuration registers, LR/SC atomic reservations and the open TileLink coherence fabric. Their side-channel behavior had not been audited. Open cores also make their own microarchitectural choices, each a possible leak.",
+   "why": "Most earlier RISC-V side-channel work reproduced known x86 attacks on an open core instead of asking whether RISC-V's own features create new channels. No prior study measured a broad corpus of open cores, from in-order to wide out-of-order, on one footing, and few carried results from noise-free RTL simulation to real silicon, where jitter and contention might hide a channel. Mitigations were also rarely costed in silicon area and power.",
+   "approach": "The study uses six open cores built through one Chipyard flow: Rocket, VexiiRiscv, CVA6, and BOOM at three widths (Medium, Large, Mega), plus two dual-hart SoCs for cross-hart channels. Because adjacent cores differ in few structures, each channel can be attributed to a specific microarchitectural cause. Every channel is measured with Welch's TVLA and paired with a proof of concept whose success rate carries a Wilson 95% confidence interval. Attack units and a whole RocketTile were then run on a Xilinx Zedboard (xc7z020), read out through a program-counter-encoding channel over JTAG. Eight mitigations were implemented in RTL and firmware and measured for closure, portability, adaptive-attacker resistance, software overhead, area and power.",
+   "results": [
+    "23 attack classes characterized: 6 novel RISC-V-specific primitives (Tier A), 7 cross-privilege and coherence channels first shown on RISC-V (Tier B), and 10 known classes given their first systematic multi-core RISC-V treatment (Tier C).",
+    "PMPectre (NV4): on out-of-order cores a PMP-denied load forwards data speculatively before the check retires, with a timing gap up to 126 cycles on LargeBoom and zero architectural faults raised.",
+    "A single unprivileged WARL write-and-read-back of PMP registers fingerprints the core family, and the PTW/PMP fault cause splits BOOM (cause 1) from Rocket, VexiiRiscv and CVA6 (cause 5).",
+    "Key recovery up to 64/64 on several channels, including page-walk-cache and predictor-residue channels; four distinct integer divider designs leak the same secret at different granularities.",
+    "On silicon: 84 live unit-level measurements and an 11-experiment battery on a whole RocketTile, with channel amplification from 2.1x to 43x relative to simulation.",
+    "Six of the eight mitigations cost at most 0.8% LUT area and all eight change dynamic power by under 2 mW; the larger cases are constant-time divide (+1.0%) and translation walk-flush (+16.4%)."
+   ],
+   "contributions": [
+    "Six novel RISC-V-specific channels: the PMPectre family, PMP WARL fingerprinting, PTW/PMP fault-cause fingerprinting, and LR/SC reservation lifetime and granularity channels.",
+    "Seven cross-privilege and coherence channels first instantiated on RISC-V, including a TileLink MESI covert channel with AES key recovery and machine-to-supervisor predictor residue.",
+    "Ten known-class channels characterized across the corpus and confirmed on silicon, including non-constant-time dividers in CVA6 and BOOM.",
+    "Silicon validation on a Zedboard with whole-core versus unit cross-validation and a 23-build synthesis and power characterization.",
+    "Eight mitigations with a full cost model covering closure, portability, adaptive attackers, software overhead, area and power.",
+    "A formal threat-model taxonomy, a statistical-validity treatment of TVLA, and a design checklist for RISC-V implementers."
+   ],
+   "keywords": [
+    "hardware security",
+    "microarchitectural side channels",
+    "RISC-V",
+    "physical memory protection",
+    "PMPectre",
+    "speculative execution",
+    "transient execution",
+    "TileLink coherence",
+    "branch predictor",
+    "FPGA silicon validation",
+    "test vector leakage assessment",
+    "constant-time mitigation"
+   ],
+   "abstract": "We present a simulation-to-silicon security characterization of microarchitectural side channels on open-source RISC-V cores. Twenty-three attack classes are measured across a six-core corpus that spans the design space from simple in-order pipelines (Rocket, VexiiRiscv) through a single-issue in-order core (CVA6) to a three-point out-of-order width sweep (BOOM Medium/Large/Mega), together with two dual-hart systems-on-chip for cross-hart channels. Six of the classes are novel microarchitectural primitives rooted in RISC-V-specific features that lack x86/ARM counterparts: speculative and enforcement-timing leakage through Physical Memory Protection (PMP), PMP write-any-read-legal (WARL) fingerprinting, page-table-walker/PMP fault-cause fingerprinting, and load-reserved/store-conditional (LR/SC) reservation lifetime and granularity channels, while the remainder are the first systematic cross-privilege and cross-core RISC-V instantiations of coherence, predictor, translation, and functional-unit channels. Every channel is quantified with Welch's Test Vector Leakage Assessment (TVLA) and paired with a proof of concept whose success rate is reported with Wilson 95% confidence intervals and explicit sample counts. Critically, we move the evaluation beyond deterministic register-transfer-level (RTL) simulation to real silicon: on a Xilinx Zedboard (xc7z020), we capture eighty-four live unit-level channel measurements and run an eleven-experiment side-channel battery on a whole RISC-V core, with a synthesis and dynamic-power model for every attack unit. Eight mitigations are implemented at the RTL and firmware levels; each is evaluated for channel closure (TVLA), portability across cores, robustness to an adaptive attacker, amortized software overhead on a standard workload suite, and, for the first time in this setting, measured silicon area and dynamic-power cost. Six of the eight mitigations cost at most 0.8% look-up-table area, and all eight change dynamic power by under two milliwatts. We further contribute a formal threat-model taxonomy, a statistical-validity treatment of the TVLA methodology, and a design-recommendation checklist for RISC-V implementers.",
+   "kind": "journal",
+   "thesis": true,
+   "impact": 3,
+   "short": "RISC-V side channels"
+  },
+  {
+   "id": "twig-ptw-partitioning",
+   "title": "The Walk Is the Channel: Page-Table-Walker Cache Partitioning for Deterministic Domain Isolation on Out-of-Order RISC-V",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Lalit K. Vashishtha",
+    "Aman Pathak"
+   ],
+   "venue": "14th IEEE International Conference on Intelligent Systems and Embedded Design (ISED 2026), NIT Warangal, Telangana, India, 18-20 December 2026",
+   "venueShort": "IEEE ISED 2026",
+   "year": 2026,
+   "status": "accepted",
+   "indexing": "Scopus (IEEE conference proceedings)",
+   "pages": 8,
+   "systemName": "TWIG",
+   "glance": "Shows the RISC-V page-table walker's caches leak across domains and closes the leak with a 113-cell way partition.",
+   "problem": "Cache-way partitioning (Intel CAT, DAWG) and secure-TLB designs isolate the L1 data cache and the L1 TLB. On a TLB miss, the RISC-V page-table walker serves the request from its own leaf L2 TLB and optional non-leaf page-walk cache. These are PLRU-replaced, untagged by address space or domain, shared by all requestors, and survive a domain switch, so they carry a cross-domain timing channel that existing partitioning does not reach.",
+   "why": "The secure-TLB literature explicitly left the page walk cache out of scope, on the premise that RISC-V had none; that premise no longer holds, since the rocket-chip walker used by Rocket, CVA6-class designs and BOOM keeps a leaf L2 TLB on by default. Prior secure-translation designs were also simulated or in-order, and they partition the instruction and data TLBs separately, which leaves the single shared walker behind both untouched.",
+   "approach": "The paper measures two channels through the walker caches on an out-of-order BOOM v4 core in Chipyard under Verilator, counting L2-TLB misses with the core's own performance counters because classification accuracy alone cannot tell an attenuated channel from a closed one. It then builds TWIG, a per-domain way-partition of the walker caches in synthesizable RTL, controlled by one machine CSR. The refill victim is confined to the ways of the domain that issued the walk, carried as a tag with the request, because on an out-of-order core a walk can complete after the domain has switched. A further variant gives each domain its own PLRU replacement tree. Area, capacity and domain-switch costs are measured against a flush-based alternative.",
+   "results": [
+    "A same-requestor channel through the shared L2 TLB displaces the attacker's translation in up to 31 of 32 trials at 98% accuracy.",
+    "A new cross-requestor channel: a victim that only executes code displaces the attacker's data translation in 15 of 16 trials (96%), and a data-only victim displaces the attacker's code translation in 16 of 16, because one arbiter feeds both TLBs into one walker.",
+    "TWIG drives displacement from 19-30 of 32 (median 25) to at most one, and classification to the 50-51% chance floor, at two, four or eight domains, for 113 cells (0.65%) and no added SRAM.",
+    "With storage partitioned but the PLRU tree shared, a victim that only hits its own entries still steers which attacker entry is evicted at 93.6% accuracy; per-domain replacement state closes this for a further 421 cells (3.1% total).",
+    "Capacity cost appears only when a domain's working set exceeds its 128/D share (worst observed +49%); after a domain switch, resumed code runs 1.7-1.8x faster than after a flush while it fits its share.",
+    "Three BOOM v4 defects found, all reproducible with no partition present: unconnected walker custom CSRs, a dTLB translation-refill livelock, and an unapplied SFENCE.VMA refill-discard condition."
+   ],
+   "contributions": [
+    "Measurement of two cross-domain channels through the page-table walker caches on out-of-order RISC-V RTL, one of them cross-requestor and, to the authors' knowledge, unreported.",
+    "TWIG, a per-domain way-partition of the walker caches keyed by the issuing domain's tag, in synthesizable BOOM RTL.",
+    "Evidence that partitioning storage alone is not enough: shared replacement state still leaks, supporting DAWG's position that replacement state must be isolated too.",
+    "A methodology point: count structure-level misses rather than trust single-bit classification accuracy, and report results over ensembles of builds.",
+    "Root-causing of three BOOM v4 defects, reported upstream."
+   ],
+   "keywords": [
+    "page-table walker",
+    "translation lookaside buffer",
+    "side channel",
+    "cache partitioning",
+    "RISC-V",
+    "BOOM",
+    "domain isolation",
+    "hardware security"
+   ],
+   "abstract": "Deterministic cache partitioning (Intel CAT, DAWG) and recent secure-TLB designs isolate what an attacker probes directly: the L1 data array and the L1 TLB. A domain's translation footprint is not confined there. On a miss a shared page-table walker services it from its own caches: on RISC-V a set-associative leaf L2 TLB and, when enabled, a non-leaf page-walk cache, both PLRU-replaced, untagged by address space or domain, and shared by all requestors. Neither cache-way nor L1-TLB partitioning reaches them, and their contents survive a switch. On an out-of-order BOOM core we measure a cross-domain channel through the shared L2 TLB that displaces the attacker's translation in up to 31 of 32 trials at 98% accuracy, and a second one: because a single arbiter multiplexes the instruction and data TLBs onto the one walker, a victim that merely executes code displaces the attacker's data translation in 15 of 16 trials, and a victim doing only data accesses displaces its code translation in 16 of 16. Partitioning the two arrays separately, as prior designs do, cannot close that: the contention is behind both. We present TWIG, a per-domain way-partition of the walker caches in synthesizable RTL, keyed by the domain that issued the walk, not the one current when the refill lands, since walks outlive switches. We count L2-TLB misses with the core's own performance counters, because classification accuracy cannot separate an attenuated channel from a closed one. TWIG drives displacement from 19-30 of 32 to at most one and classification to the chance floor, for 113 cells and no added SRAM. Partitioning storage alone is not enough: a victim that evicts nothing and only hits its own entries still steers which of the attacker's entries dies, at 93.6%, because the replacement tree stays shared. Partitioning the tree closes that too, at four times the area. Three BOOM defects surfaced along the way, all reproducible with no partition present.",
+   "kind": "conference",
+   "impact": 11
+  },
+  {
+   "id": "mspecsafe-spectre-v1-boom",
+   "title": "Closing a Spectre-v1 Cache Leak on BOOM with a Per-Domain Guard",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Lalit K. Vashishtha",
+    "Aman Pathak"
+   ],
+   "venue": "14th IEEE International Conference on Intelligent Systems and Embedded Design (ISED 2026), NIT Warangal, Telangana, India, 18-20 December 2026",
+   "venueShort": "IEEE ISED 2026",
+   "year": 2026,
+   "status": "accepted",
+   "indexing": "Scopus (IEEE conference proceedings)",
+   "pages": 6,
+   "systemName": "mspecsafe",
+   "glance": "A reliable Spectre-v1 leak on BOOM v4, three pitfalls that hid it, and a per-domain gate that closes it at no IPC cost.",
+   "problem": "Open out-of-order RISC-V cores such as BOOM let researchers study Spectre attacks and defenses on the exact RTL that will be fabricated. Timing measurement on this substrate is easy to get wrong: a flawed metric can report a leak where none exists, or report no leak while the attack is silently not running. Without a sound measurement, no defense can be evaluated.",
+   "why": "The authors set out to measure what limiting the speculation window buys against Spectre-v1 on BOOM. Their first metric showed a channel with the gadget deleted, and their repaired metric then showed no channel at all, which was also wrong. RTL tracing also showed that BOOM v3's existing guard on miss allocation uses the wrong predicate, so the leak is present in v3 as well. The paper documents the full path so others do not repeat these errors.",
+   "approach": "A textbook bounds-check-bypass gadget is run on stock SmallBoomV4 and MediumBoomV4 in Chipyard under Verilator, with negative and positive controls and a paired differential metric. Three confounds are identified and removed: cross-line baseline asymmetry, first-trial warm residency, and branch-history contamination between training and attack call sites. Cycle-stamped data-cache instrumentation then shows the speculative load allocating an MSHR whose refill installs the secret line. The defense, mspecsafe (CSR 0x80E), nacks a load that misses while its branch mask is non-zero, per domain behind one CSR bit, and is checked with exhaustive SAT and Z3 and synthesized with Vivado.",
+   "results": [
+    "The secret line beats a control in 12 of 12 trials against 0-1 of 12, and a six-byte secret is recovered end to end.",
+    "A cross-line baseline asymmetry reported a 47/50 'channel' with the gadget deleted; branch-history contamination produced a false negative that looked like a working defense.",
+    "The speculative load allocates an MSHR whose refill installs the secret-indexed line 37 cycles later, before the probe hits; BOOM v3's !IsKilledByBranch guard does not stop it (v3 leaks 6/6).",
+    "mspecsafe drives the channel from 12/12 to 2/12 (noise floor) while a positive control still registers.",
+    "IPC cost is 0% on cache-resident code and under 1% on a serial pointer chase; window limiters that also close the channel cost 11% and 33% IPC.",
+    "Synthesis adds zero registers to the data cache; LUTs move by -0.8% (within noise) and Fmax is unchanged (354 vs 353 MHz)."
+   ],
+   "contributions": [
+    "A reliable, end-to-end Spectre-v1 cache channel on BOOM v4.",
+    "Three measurement pitfalls, each able to fake or hide the channel, with the controls that defeat them.",
+    "White-box RTL confirmation of the leak, and the finding that BOOM v3's existing branch guard uses an insufficient predicate.",
+    "A minimal per-domain delay-on-miss gate on the correct predicate (br_mask != 0), machine-checked by SAT and Z3 and synthesized at no frequency cost."
+   ],
+   "keywords": [
+    "Spectre-v1",
+    "transient execution",
+    "BOOM",
+    "RISC-V",
+    "delay-on-miss",
+    "flush+reload",
+    "measurement methodology",
+    "hardware security"
+   ],
+   "abstract": "We report a reliable Spectre-v1 cache channel on the out-of-order BOOM v4 RISC-V core, the measurement pitfalls that first hid it, and a minimal per-domain defense that closes it. On stock SmallBoomV4 and MediumBoomV4, a textbook bounds-check-bypass gadget speculatively installs the secret-indexed line in the L1 on every trial. Under a paired differential metric the secret line beats a control in 12 of 12 trials against 0-1 of 12, and we recover a six-byte secret end to end. Reaching this required defeating three confounds, each able to fake or hide the channel on its own: a cross-line baseline asymmetry that reports a leak even with the gadget deleted (47/50), a first-trial warm-residency artifact, and branch-history contamination that makes an aggregate null look exactly like a working defense. Cycle-stamped RTL instrumentation then watches a still-speculative load allocate a miss-status holding register whose refill installs the secret line before the probe hits. The same trace exposes a design defect. BOOM v3's existing guard, !IsKilledByBranch, fires only for a load killed in the current cycle, not one still speculative, so v3 leaks identically (6/6). Our defense mspecsafe gates miss allocation on the right predicate, br_mask != 0, per-domain behind a one-bit CSR. It drives the channel to the noise floor (12/12 to 2/12) while a positive control still registers, costs zero IPC on cache-resident code, is machine-checked correct by SAT and Z3, and synthesizes with zero added registers to the data cache and no change in maximum frequency.",
+   "kind": "conference",
+   "impact": 12
+  },
+  {
+   "id": "safehint-riscv-hint",
+   "title": "No-Op or No Security? A Backward-Compatible, Discoverable, Fail-Closed Contract for Security Directives in the RISC-V HINT Encoding Space",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Lalit K. Vashishtha",
+    "Aman Pathak"
+   ],
+   "venue": "14th IEEE International Conference on Intelligent Systems and Embedded Design (ISED 2026), NIT Warangal, Telangana, India, 18-20 December 2026",
+   "venueShort": "IEEE ISED 2026",
+   "year": 2026,
+   "status": "accepted",
+   "indexing": "Scopus (IEEE conference proceedings)",
+   "pages": 7,
+   "systemName": "SafeHint",
+   "glance": "A contract that lets RISC-V security hints stay backward-compatible no-ops yet fail closed when they are not honored.",
+   "problem": "RISC-V HINT encodings execute as no-ops on cores that do not recognize them, so security directives placed there (a speculation barrier, a constant-time region marker) are backward compatible. The same property is a hazard: on a core that ignores the directive, software runs unprotected and nothing reports it. The failure is fail-open and invisible.",
+   "why": "Existing feature discovery (Arm ID registers and HWCAP, RISC-V misa) advertises presence but gives no per-directive fail-closed guarantee, and the HINT space has no enumeration at all. A HINT cannot itself report capability, since it writes no register. The authors found no prior work that states or builds a delivery-and-discovery contract for silently ignorable security instructions.",
+   "approach": "SafeHint has three parts. Directives are encoded as reserved rd=x0 HINTs, so they stay true no-ops on unaware cores. A user-readable capability CSR, useccap, returns a per-directive honored bitmap on an aware core and raises illegal-instruction on an unaware one, so a single read at start-up acts as a canary. An enforcement CSR, usecctl, makes an aware but partial core trap any directive it does not honor. The contract is implemented on BOOM v4 in Chipyard with a flush-based speculation barrier as the example directive, and evaluated under Verilator on null, partial and full cores.",
+   "results": [
+    "A directive-carrying binary produces the identical architectural result (checksum 0x17a3d6e7dc6f5a2a) on unaware, partial and full cores.",
+    "The probe raises illegal-instruction (mcause=2) on the unaware core, returns bitmap 0x3 on the full core and 0x1 on the partial core.",
+    "With enforcement on, an unhonored directive on the partial core traps (fail closed); with it off, it is a silent no-op.",
+    "Decode and CSR cost is 56-63 two-input gate equivalents and one flip-flop, flat across bitmap widths 2 to 64 (yosys).",
+    "The example barrier costs 26 cycles per insertion at every loop length, against 19 for fence and 61-81 for fence.i."
+   ],
+   "contributions": [
+    "Identification of silent ignorability as a security hazard for directives carried in the RISC-V HINT space.",
+    "A three-part contract: HINT carrier, trapping capability-probe CSR as canary, and an enforcement CSR for partial implementations.",
+    "An implementation on out-of-order BOOM v4 RTL with measured no-op equivalence, canary behavior, fail-closed enforcement and area.",
+    "A design that is independent of the action carried, so new directives can be added under the same bitmap and trap."
+   ],
+   "keywords": [
+    "RISC-V",
+    "HINT encoding",
+    "ISA extension",
+    "hardware security",
+    "speculation barrier",
+    "backward compatibility",
+    "fail-closed",
+    "BOOM"
+   ],
+   "abstract": "The RISC-V HINT encoding space is an appealing place to carry security directives. Because unaware cores execute HINTs as architectural no-ops, a directive placed there is backward compatible. The same property is a hazard. A security directive that is silently ignored on hardware that does not implement it gives a false sense of security: software proceeds as if protected when it is not. Backward compatibility and security enforcement are therefore in tension. We address this with SafeHint, a three-part contract. First, directives ride reserved HINT encodings, so they are architecturally inert on unaware cores, which we verify with a bit-identical execution trace. Second, a capability-probe control and status register (CSR), useccap, acts as a canary: it returns a per-directive support bitmap on an aware core and raises an illegal-instruction exception on an unaware one, so software can detect a silent downgrade even on a core that cannot be made to trap the HINT itself. Third, an enforcement CSR, usecctl, makes an aware-but-partial core trap any unhonored directive, so partial implementations also fail closed. We implement SafeHint on the out-of-order BOOM v4 core in a fresh Chipyard checkout and evaluate it under Verilator. We report bit-identical architectural execution of a directive-carrying binary on an unaware core and on a core that honors the directive, the probe canary firing on both an unaware and an aware core, fail-closed behavior on a partial implementation, and a decode and CSR cost of about 60 two-input gate equivalents plus one flip-flop. The contribution is the delivery-and-discovery contract rather than any single defense; a speculation barrier serves as a concrete, measured vehicle.",
+   "kind": "conference",
+   "impact": 13
+  },
+  {
+   "id": "chroma-branch-predictor",
+   "title": "History Is the Channel: Why Index Coloring Cannot Isolate a History-Based Branch Predictor, and a Warm Per-Domain Fix on Open RISC-V RTL",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Lalit K. Vashishtha",
+    "Aman Pathak"
+   ],
+   "venue": "14th IEEE International Conference on Intelligent Systems and Embedded Design (ISED 2026), NIT Warangal, Telangana, India, 18-20 December 2026",
+   "venueShort": "IEEE ISED 2026",
+   "year": 2026,
+   "status": "accepted",
+   "indexing": "Scopus (IEEE conference proceedings)",
+   "pages": 8,
+   "systemName": "CHROMA",
+   "glance": "Index-colored branch predictors still leak through shared history, and keeps history per domain without flushing.",
+   "problem": "Branch predictors are shared between security domains, which enables BranchScope, Spectre-v2 branch-target injection, return-stack poisoning and branch history injection. The common low-cost defense, shipping in Arm silicon (SCXTNUM with FEAT_CSV2) and proposed in STBPU, XOR-BP, HyBP and Half&Half, folds a domain identifier into the predictor index. In a TAGE-style predictor the index depends on both the PC and the shared global history, so isolating the index does not isolate the history.",
+   "why": "Almost all secure-predictor designs isolate the tables but leave the global history register and the return-address stack shared. Deployed history mitigations (Intel BHI_DIS_S, Arm ECBHB, the Linux history-clear loop) clear history at each domain boundary and pay a re-warm cost. No prior design kept a warm, per-domain history, and the residual history channel under index coloring had not been measured on open RTL.",
+   "approach": "On a BOOM v4 core with a TAGE-L predictor, the authors reimplement index coloring and show a history covert channel that survives it. CHROMA adds one software-set 8-bit domain color CSR, mcolor, that drives three mechanisms: a colored table index, a banked global history register saved and restored on a switch so each domain stays warm, and a per-domain return-address stack. XOR coloring (capacity preserving, probabilistic) is compared with partition coloring (deterministic, 1/N capacity). Results come from synthesizable BOOM RTL under Verilator and a TAGE-L behavioral model cross-validated against the RTL.",
+   "results": [
+    "A history covert channel stays at 100% accuracy under index coloring; CHROMA reduces it to 53% (chance).",
+    "The cross-domain return-stack channel falls from 85% to 0%.",
+    "At domain switches every 32 branches, clearing history causes 358% more mispredictions than warm history (4.6x the rate); the gap is 206% at 64, 120% at 128 and at most 6% from 512 branches.",
+    "Single-domain misprediction is unchanged at 1.73% with XOR coloring; partition coloring costs 5.56% at N=4.",
+    "On BOOM RTL with index coloring active, a victim still mispredicts 1.25% in the first 16 branches after a switch against 0% at steady state.",
+    "Hardware cost is one 8-bit register, a 26-gate color hash and small per-domain banks; single-domain execution is bit-identical to the unmodified core."
+   ],
+   "contributions": [
+    "An open-RTL measurement showing that index coloring leaves a history-based cross-domain channel open.",
+    "A banked, warm per-domain global history that closes the channel without the re-warm cost of clearing.",
+    "Per-domain return-address-stack isolation under the same color.",
+    "A completeness map of which predictor substructures prior defenses isolate, and a characterization of the XOR versus partition coloring trade.",
+    "A synthesizable BOOM artifact and a cross-validated behavioral model that reproduce every number."
+   ],
+   "keywords": [
+    "branch predictor",
+    "side channel",
+    "Spectre",
+    "branch history injection",
+    "TAGE",
+    "RISC-V",
+    "BOOM",
+    "domain isolation",
+    "hardware security"
+   ],
+   "abstract": "Cross-domain interference in the branch predictor is the substrate for a family of attacks that includes BranchScope, Spectre-v2 branch-target injection, and return-stack poisoning. The standard low-cost defense, shipping in Arm silicon (SCXTNUM with FEAT_CSV2) and proposed several times in the literature (STBPU, XOR-BP, HyBP, Half&Half), folds a software-set domain identifier into the predictor index so that different domains map to different table entries without flushing. We show on open RISC-V RTL, a BOOM out-of-order core with a TAGE-L predictor, that index coloring alone is not sufficient. Because a TAGE index is a function of both the program counter and the shared global history register, a colored-index predictor still leaks across domains through the history. In our measurements a history covert channel remains at 100% accuracy under index coloring and falls to chance only once the history itself is isolated. We present CHROMA, a single software-set domain color (mcolor, a new RISC-V control and status register) that isolates the full branch prediction unit: the table index, a per-domain global-history register kept warm across switches, and a per-domain return-address stack. Every deployed history mitigation (Intel BHI_DIS_S, Arm ECBHB, the Linux history-clear loop) instead clears history at a domain boundary and pays a re-warm cost, while CHROMA retains each domain's history. It reduces the history covert channel from 100% to 53% (chance) and the return channel from 85% to 0%, and at frequent sub-process domain crossings it incurs up to 4.6x fewer post-switch mispredictions than clearing. The hardware cost is one 8-bit register, a 26-gate color hash, and small per-domain banks; single-domain execution is bit-identical to the unmodified core. We also characterize the capacity-versus-determinism trade between XOR coloring (capacity preserving, probabilistic) and partition coloring (deterministic, 1/N capacity).",
+   "kind": "conference",
+   "impact": 10
+  },
+  {
+   "id": "setsentry-eviction-set-detection",
+   "title": "Catching the Set Builder: Hardware Detection of Eviction-Set Construction at the Shared LLC on RISC-V",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Lalit K. Vashishtha",
+    "Aman Pathak"
+   ],
+   "venue": "5th International Conference on Computing, Communication and Learning (COCOLE 2026), NIT Raipur, Chhattisgarh, India, September 2026; proceedings in Springer Communications in Computer and Information Science (CCIS)",
+   "venueShort": "COCOLE 2026 (Springer CCIS)",
+   "year": 2026,
+   "status": "accepted",
+   "indexing": "Scopus (Springer CCIS)",
+   "pages": 12,
+   "systemName": "SetSentry",
+   "glance": "An LLC hardware monitor that detects eviction-set construction for Prime+Probe, even when the attacker slows down.",
+   "problem": "Contention-based cache attacks such as Prime+Probe and Evict+Reload on a shared last-level cache must first build an eviction set: many addresses that map to one cache set. Existing detectors watch symptoms such as eviction rate or cyclic interference, which benign workloads also produce, so they raise false alarms. An attacker who slows its probing flattens rate and performance-counter signals and evades them.",
+   "why": "The literature treats eviction-set construction and eviction rate as one phenomenon. The authors argue they differ: construction has a structural fingerprint, one domain touching many distinct lines that conflict in the same set, that benign cache pressure lacks. A detector built on that fingerprint can be both more discriminating and independent of attacker speed. Prior detectors such as Cyclone and CC-Hunter were evaluated only in architectural simulators.",
+   "approach": "SetSentry is a passive, domain-aware monitor on the shared inclusive L2 that counts distinct cross-domain conflicting lines per set. It tracks only sets under cross-domain contention in a small direct-mapped Hot-Set Table with Bloom filters, and alerts only after a BUILD, ASSEMBLE, PROBE lifecycle state machine completes, with a per-set activity-based decay window. It raises a machine interrupt and drives no cache signal. It is implemented in synthesizable RTL on a dual-core Rocket SoC in Chipyard, evaluated under Verilator against working cross-core Prime+Probe and Evict+Reload channels and three benign workloads, compared with rate and Cyclone-style interference detectors, cross-validated with a bit-accurate model, and checked by randomized RTL property testing.",
+   "results": [
+    "Only SetSentry detects both attacks with no benign false positives: 0/3, against 3/3 for the rate detector and 2/3 for the interference detector.",
+    "It alerts 31 accesses after the attacker assembles its 7th conflicting line, before 99% of the target set's accesses (4577 of 4623).",
+    "It keeps detecting across a 256x attacker slowdown; the rate detector is evaded at 32x and the interference and wall-clock-windowed detectors at 64x.",
+    "A detecting configuration (8 entries, 32-bit Bloom) costs 2518 flip-flops and 5898 gates; detection holds for table sizes from 8 to 128.",
+    "Property checks over 5000 trials each show no single-domain or sub-threshold false alarms and no missed detection for realistic eviction sets.",
+    "The attack channels are real: Prime+Probe probe latency rises from 441 to 497 cycles (+12.7%) when the victim evicts."
+   ],
+   "contributions": [
+    "A structural detection signal: distinct lines a foreign domain causes to conflict per set.",
+    "An attack-lifecycle state machine that rejects benign transients.",
+    "Detection that is invariant to the attacker's access rate.",
+    "A low-area Hot-Set Table whose cost scales with contended sets, not cache size.",
+    "A synthesizable RTL implementation on an open RISC-V SoC with cross-validated model, property verification and area characterization."
+   ],
+   "keywords": [
+    "cache side channel",
+    "eviction set",
+    "Prime+Probe",
+    "hardware detector",
+    "last-level cache",
+    "RISC-V",
+    "hardware security"
+   ],
+   "abstract": "Contention-based cache side channels (Prime+Probe, Evict+Reload) share a necessary first step: the attacker must construct an eviction set, a group of addresses that map to one cache set and collectively fill its ways. This construction has a structural signature that benign cache pressure lacks: one security domain touches many distinct lines that conflict in the same set, whereas benign cache-stressing workloads (streaming, producer-consumer, pointer-chasing) revisit a small footprint per set. We present SetSentry, a passive, domain-aware last-level-cache (LLC) monitor that detects eviction-set construction in hardware by counting distinct cross-domain conflicting lines per set, gated by a BUILD->ASSEMBLE->PROBE lifecycle state machine, in a compact Hot-Set Table whose area scales with the sets under contention, not with cache size. The signal is structural, hence invariant to the attacker's access rate: slowing down, the move that defeats rate- and performance-counter-based detectors, does not evade it. Implemented as synthesizable RTL on the inclusive L2 of a dual-core RISC-V Rocket SoC in Chipyard and evaluated under cycle-accurate Verilator simulation on working cross-core Prime+Probe and Evict+Reload channels, SetSentry is the only one of the rate, interference, and structural detectors we compare that detects both attacks with no benign false positives; it alerts once the eviction set is assembled, before 99% of the probing; it keeps detecting across a 256x attacker slowdown that evades the baselines; it works with Hot-Set Tables down to 8 entries (about 2.5k flip-flops); and randomized RTL property checking confirms no single-domain or sub-threshold false alarms and no missed detection for realistic eviction sets.",
+   "kind": "conference",
+   "impact": 14
+  },
+  {
+   "id": "dirs-reload-refresh",
+   "title": "The Replacement Policy Is a Side Channel: Closing the Reload+Refresh Leak at the Policy Level on RISC-V",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Lalit K. Vashishtha",
+    "Aman Pathak"
+   ],
+   "venue": "5th International Conference on Computing, Communication and Learning (COCOLE 2026), NIT Raipur, Chhattisgarh, India, September 2026; proceedings in Springer Communications in Computer and Information Science (CCIS)",
+   "venueShort": "COCOLE 2026 (Springer CCIS)",
+   "year": 2026,
+   "status": "accepted",
+   "indexing": "Scopus (Springer CCIS)",
+   "pages": 12,
+   "systemName": "DIRS",
+   "glance": "First open-RTL Reload+Refresh channel on RISC-V, closed by giving each domain its own cache replacement state.",
+   "problem": "Randomized caches (CEASER, ScatterCache, Mirage) and way partitioning (DAWG, CAT) defend where data is placed in a shared last-level cache. Neither protects the replacement policy, whose state also leaks. In Reload+Refresh an attacker learns a victim's access to a shared line from how it reorders the PLRU state, without evicting the target, which makes the channel stealthier than contention.",
+   "why": "Reload+Refresh had only been shown on closed Intel parts, whose replacement state cannot be inspected or changed. It was unknown whether the leak exists in open hardware and whether it can be removed cheaply at its source. The authors also wanted to test the conjecture that a replacement-state channel bypasses randomization.",
+   "approach": "On a dual-core Chipyard SoC with a shared inclusive L2, using both the in-order Rocket and the out-of-order BOOM, the authors build a cross-core Reload+Refresh covert channel. DIRS (Domain-Isolated Replacement State) replicates only the small per-set replacement metadata per security domain while the data array stays fully shared, so a domain's victim selection depends only on its own accesses. Non-interference is proved by unbounded k-induction with Yosys and Z3. DIRS is synthesized with Vivado on Kintex UltraScale+ and evaluated for security, area, timing, domain scaling and throughput, and the channel is also tested against a CEASER-style randomized cache.",
+   "results": [
+    "The Reload+Refresh covert channel reaches 100% accuracy on a deterministic-PLRU L2 on both Rocket and BOOM.",
+    "DIRS reduces it to 48% (chance) on both cores.",
+    "DIRS costs +73 LUTs (1.1% of the L2), +3 flip-flops and 2 block-RAM tiles of metadata; the data array is byte-identical and Fmax is unchanged.",
+    "Metadata stays at or below 2.7% of capacity through 16 domains.",
+    "Single-domain overhead is zero and two domains that fit the L2 run at the same 19 cycles per access; only a 2x overcommit costs more (35 vs 31 cycles, +13%).",
+    "Negative result: the channel does not bypass randomization, since it also needs an eviction set, so randomization and DIRS are complementary."
+   ],
+   "contributions": [
+    "The first open-RTL Reload+Refresh channel on RISC-V, on in-order and out-of-order cores.",
+    "DIRS, a policy-level defense that isolates replacement state per domain without partitioning capacity.",
+    "A machine-checked non-interference proof by unbounded k-induction.",
+    "Low-cost FPGA synthesis results and a domain-count scaling study.",
+    "An analysis showing replacement-state isolation and address randomization are orthogonal and composable."
+   ],
+   "keywords": [
+    "cache side channel",
+    "Reload+Refresh",
+    "replacement policy",
+    "PLRU",
+    "RISC-V",
+    "hardware security",
+    "formal verification"
+   ],
+   "abstract": "Randomized caches (CEASER, ScatterCache, Mirage) and way partitioning (DAWG, CAT) are the dominant microarchitectural defenses against last-level cache (LLC) side channels. Both target where data is placed: partitioning splits capacity, randomization scrambles the address-to-set map. Neither addresses the cache replacement policy, whose state is itself a side channel exploited by the stealthy Reload+Refresh attack. On an open, synthesizable dual-core RISC-V SoC (the in-order Rocket and the out-of-order BOOM) with a shared inclusive L2, we implement, to our knowledge, the first open-RTL Reload+Refresh covert channel on RISC-V, achieving 100% accuracy on a deterministic-PLRU LLC. We then introduce DIRS (Domain-Isolated Replacement State), which replicates only the small per-set replacement metadata per security domain while keeping the data array fully shared, so that one domain's accesses cannot influence another domain's victim selection; DIRS reduces the channel to the noise floor (100% -> 48%, i.e. chance) on both cores, and we machine-check the non-interference property by unbounded k-induction (Yosys+Z3). Synthesized with Vivado for a Kintex UltraScale+ part, DIRS costs +73 LUTs (1.1% of the L2), +3 flip-flops, and 2 block-RAM tiles of metadata, with the data array byte-identical and the maximum clock frequency unchanged. A negative result bounds the threat: the stealthy channel does not bypass randomization (both channels need an eviction set), so randomization and DIRS are complementary, not competing.",
+   "kind": "conference",
+   "impact": 15
+  },
+  {
+   "id": "memory-security-review",
+   "title": "Memory Security: From Cold Boot Attacks to Side-Channel Defenses",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "venue": "International Conference on Information and Communication Technology for Intelligent Systems (ICTIS 2026), proceedings in Springer Lecture Notes in Networks and Systems (LNNS)",
+   "venueShort": "ICTIS 2026 (Springer LNNS)",
+   "year": 2026,
+   "status": "accepted",
+   "indexing": "Scopus (Springer LNNS)",
+   "paperType": "review",
+   "glance": "A review of hardware memory encryption and the attacks it must stop: cold boot, bus sniffing, replay and power analysis.",
+   "problem": "Data in DRAM is exposed on the path between the CPU and memory. Attackers can read residual DRAM contents after power-off (cold boot), probe the memory bus, replay or tamper with stored lines, and recover keys from encryption engines by power analysis. Storage encryption does not protect this volatile data.",
+   "why": "Hardware memory encryption is now shipped by Intel and AMD, but the threats, the vendor mechanisms, integrity trees and side-channel countermeasures are described in separate bodies of work. The authors wrote a single review for hardware engineers that ties these together and states the security guarantees and performance trade-offs of each. It supports the authors' own research line on memory encryption engines for RISC-V.",
+   "approach": "The paper reviews cold boot attacks and layered mitigations; bus sniffing attacks such as Membuster and address and timing countermeasures; Intel TME, MKTME and AMD SME/SEV; integrity protection with Merkle trees, Bonsai Merkle trees, parallelizable and hybrid trees and replay-aware designs; granular per-page and per-VM memory encryption, including non-volatile memory; and simple and differential power analysis with masking, rekeying, circuit-level balancing and randomized execution.",
+   "results": [
+    "Cold boot remains effective across DRAM generations; no single countermeasure suffices, so inline encryption, key eviction, boot-time scrubbing, key vaults and NVM cleansing are layered.",
+    "Inline AES-XTS hides data on the bus but not line addresses or access timing, which need address scrambling and timing shaping.",
+    "Bonsai Merkle trees reduce DRAM hash overhead from about 12% to under 1% by caching upper tree levels on chip.",
+    "Granular schemes such as MKTME (up to 32 key slots) and SEV isolate tenants, at measurable key-switch and mixed-page costs.",
+    "Stacking power-analysis defenses such as masking and power balancing gives more than additive protection, but each layer adds area, latency or energy."
+   ],
+   "contributions": [
+    "A structured survey of memory-security threats from cold boot to power analysis.",
+    "A comparison of commercial memory encryption (TME, MKTME, SME/SEV) by key model and isolation.",
+    "A summary of integrity-tree designs and their overheads.",
+    "A catalogue of DPA and SPA countermeasures relevant to memory-encryption engines, with open challenges for heterogeneous and non-volatile systems."
+   ],
+   "keywords": [
+    "memory encryption",
+    "cold boot attacks",
+    "bus sniffing",
+    "integrity protection",
+    "hardware security",
+    "side-channel attacks"
+   ],
+   "abstract": "Memory encryption is a key security requirement for modern computing systems, addressing vulnerabilities between CPUs and main memory. Traditional storage encryption is insufficient for protecting volatile data in RAM, which remains exposed to bus sniffing, cold boot attacks, and side-channel exploits. This paper therefore systematically reviews memory encryption techniques focused on hardware-based solutions like Intel Total Memory Encryption (TME), Multi-Key TME, and AMD Secure Memory Encryption, which provide robust protection while minimising performance overhead. The paper also explores integrity protection via Merkle trees and side-channel countermeasures against Differential Power Analysis and Simple Power Analysis attacks. Additionally, granular memory encryption methods for multi-tenant environments are discussed, highlighting their role in isolating sensitive data across security domains. By examining security guarantees and performance trade-offs, we emphasise the necessity of efficient memory encryption to safeguard against evolving threats targeting the CPU-memory interface, providing hardware engineers a foundation for ensuring data confidentiality and integrity.",
+   "kind": "review",
+   "impact": 33
+  },
+  {
+   "id": "cmo-coherency-smartcom",
+   "title": "Formal Verification of Software-Managed Cache Coherency for RISC-V Heterogeneous Embedded Systems",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "venue": "Smart Trends in Computing and Communications (SmartCom), Lecture Notes in Networks and Systems, Vol. 1997, Springer, pp. 430-442",
+   "venueShort": "SmartCom (Springer LNNS)",
+   "year": 2026,
+   "publishedOnline": "2026-07-10",
+   "status": "published",
+   "indexing": "Scopus",
+   "doi": "10.1007/978-3-032-27563-9_40",
+   "url": "https://doi.org/10.1007/978-3-032-27563-9_40",
+   "pages": "430-442",
+   "glance": "A formal model of when RISC-V cache flushes are needed around DMA, plus an optimizer that removes the redundant ones.",
+   "problem": "Many embedded chips use DMA engines that bypass the CPU caches, so software must issue cache management operations (CMOs) by hand. The RISC-V Zicbom extension provides CBO.CLEAN, CBO.INVAL and CBO.FLUSH for this. A missing CMO causes stale reads or lost writes that silently corrupt data. Flushing before every DMA transfer is safe but slow in latency-sensitive code such as audio, sensor fusion and accelerator offload.",
+   "why": "CMO placement was guided by informal rules and manual reasoning. Hardware coherence protocols such as MESI do not apply to non-coherent DMA, and memory-model verification tools target thread-to-thread synchronization, not CPU-to-device coherency. The paper fills this gap with a formal treatment that says exactly which CMOs are required.",
+   "approach": "The system is modeled as a transition system with per-line cache states Invalid, Clean and Dirty, CPU loads and stores, the three Zicbom CMOs, and DMA reads and writes that bypass the cache. The paper proves necessary and sufficient preconditions for a safe DMA write (every cached copy invalid) and a safe DMA read (no dirty copy). It builds a coherency monitor automaton, proves that verification is decidable for bounded programs, and proves a compositionality result that lets addresses be checked independently. A forward and backward dataflow analysis then removes redundant CMOs and downgrades FLUSH to CLEAN or INVAL where possible. The model and optimizer were implemented in about 2,500 lines of Python and run on six embedded DMA benchmarks.",
+   "results": [
+    "Across six benchmarks the optimizer cut CMOs from 1,232 to 508, a 58.8% reduction, and every optimized program was verified coherent.",
+    "Reduction ranged from 25.0% (double buffering) to 83.3% (accelerator offload); producer-consumer reached 70.8%.",
+    "Estimated cycle cost of CMOs fell by 26.6% on average and by up to 57.6% (accelerator offload), using 50/10/60-cycle costs for CLEAN/INVAL/FLUSH.",
+    "Minimal CMO choice is proved: INVAL before a DMA write, CLEAN before a DMA read; FLUSH is never minimal.",
+    "Verification is decidable in O(3^(|P|x|A|) x |pi|) time for bounded programs, and address partitioning reduces this to O(k x 3^(|P|x n/k)).",
+    "The optimizer runs in time linear in program size, O(|pi| x |P| x |A|); the full benchmark suite ran in about 53 seconds."
+   ],
+   "contributions": [
+    "An automata-based formal model of software-managed cache coherency for RISC-V with Zicbom and non-coherent DMA.",
+    "Necessary and sufficient conditions for safe DMA writes and reads (Theorems 1 and 2) and the minimal CMO for each case.",
+    "A coherency monitor automaton with a proof that coherency verification is decidable for bounded programs.",
+    "A compositionality theorem that allows verification address by address.",
+    "A sound dataflow algorithm that removes redundant CMOs, evaluated on six embedded DMA benchmarks."
+   ],
+   "keywords": [
+    "Cache coherency",
+    "RISC-V",
+    "DMA",
+    "Formal verification",
+    "Automata",
+    "Embedded systems",
+    "Zicbom"
+   ],
+   "abstract": "Modern embedded systems increasingly rely on non-coherent DMA to reduce hardware complexity, requiring explicit software management of cache coherency through Cache Management Operations (CMOs). We present a formal automata-based model for software-managed cache coherency in RISC-V systems with the Zicbom extension. Our model precisely characterizes the necessary and sufficient conditions for safe DMA operations, proves that coherency verification is decidable for bounded programs, and provides a sound dataflow-based algorithm for eliminating redundant CMOs. Evaluation on six embedded benchmarks demonstrates 58.8% average CMO reduction with verified coherency maintenance.",
+   "kind": "conference",
+   "impact": 20
+  },
+  {
+   "id": "rv-josh-smartcom",
+   "title": "RV-JOSH: A Hardened Operating System for RISC-V based on Java",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Swati Mishra",
+    "Aman Pathak"
+   ],
+   "venue": "Smart Trends in Computing and Communications (SmartCom), Lecture Notes in Networks and Systems, Vol. 1991, Springer, pp. 390-401",
+   "venueShort": "SmartCom (Springer LNNS)",
+   "year": 2026,
+   "publishedOnline": "2026-08-02",
+   "status": "published",
+   "indexing": "Scopus",
+   "doi": "10.1007/978-3-032-27754-1_36",
+   "url": "https://doi.org/10.1007/978-3-032-27754-1_36",
+   "pages": "390-401",
+   "glance": "A RISC-V operating system with a Java kernel, built-in malware detection and side-channel resistant memory encryption.",
+   "problem": "RISC-V is spreading into IoT and embedded devices, but those platforms need protection against malware and against memory attacks such as power analysis on encryption keys. Operating system kernels are written in C and assembly, which makes them hard for new developers to change and open to memory-safety bugs. Security features also have to be wired into large, tightly coupled code bases such as Linux.",
+   "why": "The paper cites the difficulty of evolving Linux, including the rejection of RISC-V changes for Linux 6.17 over code quality and the Rust-for-Linux maintainer resignations. Earlier Java operating systems such as JNode and JX showed the idea is feasible but have been dormant for a decade and offer no malware detection or memory encryption for RISC-V. User-space malware detectors can add delays above 100 ms, which leaves room for evasion.",
+   "approach": "RV-JOSH runs a JVM on bare-metal RISC-V, with the kernel written in Java and calling a thin C and assembly layer through JNI; Java class files load directly as OS processes. A static detector scans bytecode at process creation, extracts 1-gram and 2-gram opcode features and classifies them with a random forest and a neural network. A runtime detector samples ten new QEMU performance monitors (basic-block size, branch density, memory access pattern, instruction mix, code-page writes, syscall frequency, jump targets, hot paths, memory span, NOP runs) and feeds HMM, LSTM and Isolation Forest models. A page-level memory encryption module supports AES-256, ASCON-128a and ChaCha20-Poly1305 with PUF-derived keys, constant-time code against SPA and periodic rekeying against first-order DPA. QEMU was also extended with an encrypted page cache so plaintext never appears in guest memory.",
+   "results": [
+    "Kernel boot takes 22-38 ms on qemu-system-riscv64 10.0.2; JVM initialization (8-12 ms) and crypto engine setup (5-8 ms) dominate.",
+    "Software encryption throughput without rekeying: ChaCha20 798.5 MB/s, ASCON-128 402.8 MB/s, AES-128 151.2 MB/s.",
+    "Rekeying every 5 operations lowers ChaCha20 read throughput to 656.1 MB/s; rekeying every 100 operations keeps it at 783.6 MB/s.",
+    "Static detection latency: neural network 0.263 ms per sample (3,793 samples/s); random forest with 128 trees 39.3 ms (25 samples/s).",
+    "Dynamic detection latency: LSTM 0.81 ms, HMM 0.788 ms, Isolation Forest 10.5 ms per sample.",
+    "Models were evaluated on synthetic data (10,000 static samples with 256 features; 50,000 dynamic samples with 10 counter features), since no real Java malware dataset for RISC-V exists."
+   ],
+   "contributions": [
+    "A RISC-V operating system with a Java kernel and minimal C and assembly, where Java classes load directly as processes.",
+    "A hybrid malware detection framework combining static bytecode n-gram analysis with runtime hardware-counter monitoring.",
+    "Ten additional QEMU performance monitors for behavioral malware analysis.",
+    "A page-level memory encryption module with selective encryption and configurable rekeying, designed to resist SPA and DPA on IoT-class devices."
+   ],
+   "keywords": [
+    "Security",
+    "Operating Systems",
+    "RISC-V",
+    "Java",
+    "Memory Encryption",
+    "Malware Detection",
+    "QEMU"
+   ],
+   "abstract": "RISC-V's open architecture has gained wide adoption, but ensuring platform security remains challenging. We present a RISC-V operating system with a Java-based kernel using JNI for low-level services. User processes written in Java can be directly loaded as OS processes, lowering development barriers. The system includes malware detection combining static bytecode analysis with runtime monitoring. Static analysis extracts n-gram opcode features classified using random forest and neural network models. Runtime detection uses extended hardware performance counters via QEMU augmentation. A page-level memory encryption module provides resistance to Simple and Differential Power Analysis using selective encryption and periodic rekeying for IoT device constraints. The result is a RISC-V platform combining accessible OS development with multi-layered protection.",
+   "kind": "conference",
+   "impact": 21
+  },
+  {
+   "id": "cache-spec-review-ict4sd",
+   "title": "Cache and Speculative Side Channel Attacks: A Comprehensive Review",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Aman Pathak"
+   ],
+   "venue": "ICT Systems and Sustainability (ICT4SD 2025), Lecture Notes in Networks and Systems, Springer, Vol. 2 of the proceedings, pp. 219-233",
+   "venueShort": "ICT4SD 2025 (Springer LNNS)",
+   "year": 2025,
+   "publishedOnline": "2025-10-08",
+   "status": "published",
+   "indexing": "Scopus",
+   "doi": "10.1007/978-3-032-06665-7_21",
+   "url": "https://doi.org/10.1007/978-3-032-06665-7_21",
+   "pages": "219-233",
+   "glance": "A survey of cache timing and transient-execution attacks, from Spectre to Apple Silicon, and their defenses.",
+   "problem": "Speculative execution, branch prediction, prefetching and shared caches make processors fast but leave measurable traces of secret data. Since Spectre and Meltdown, almost every microarchitectural structure has been turned into a leak. Vendors shipped patches quickly, but these cost performance and did not remove the root causes; KPTI alone costs about 5% on average and up to 30% in the worst case.",
+   "why": "The attack literature grew fast and spread across x86, ARM, Apple Silicon and GPUs, with new vectors such as data memory-dependent prefetchers, load value prediction and GPU compression channels. Researchers and architects needed one place that explains the mechanisms, where each attack works, and why existing mitigations fall short, so that the next defenses can be both secure and cheap.",
+   "approach": "The review first explains the hardware features that leak: out-of-order and speculative execution, the branch target buffer, the return stack buffer, store-to-load forwarding and deferred page-permission checks. It then classifies attacks into classical access-based attacks (Flush+Reload, Prime+Probe, Flush+Flush, CacheBleed), the Meltdown and Spectre families and newer variants: EFLAGS-based timing, load address and load value prediction (Apple Silicon), post-barrier Spectre, cross-cache kernel heap exploits, branch target injection, the GoFetch data memory-dependent prefetcher, GPU compression channels, cross-VM, browser and TEE attacks. Mitigations are grouped into partitioning and isolation, randomization, speculative fences and microcode, compiler hardening, ML-based runtime detection and timer obfuscation, followed by OS and vendor patches such as KASLR, KPTI, retpoline, Foreshadow and MDS fixes, and browser timer changes.",
+   "results": [
+    "Organizes the field into 16 attack classes, from classical cache timing to GPU compression and TEE-focused attacks.",
+    "Groups defenses into six mitigation patterns and six families of OS and vendor patches.",
+    "Finds that most deployed mitigations carry a performance cost and do not fully close the underlying channels.",
+    "Identifies directions for future work: architectural isolation of critical contexts, dynamic detection, formal verification of security-critical CPU parts, and cross-layer collaboration."
+   ],
+   "contributions": [
+    "An architecture-agnostic survey tracing attacks from Spectre to recent Apple Silicon attacks.",
+    "A description of the microarchitectural features that each attack class exploits.",
+    "A taxonomy of mitigation patterns across operating systems, hardware and compilers, with their limitations.",
+    "A reference for hardware researchers designing defenses with low performance overhead."
+   ],
+   "keywords": [
+    "Cache side-channel",
+    "Speculative execution",
+    "Microarchitectural vulnerabilities",
+    "Security"
+   ],
+   "abstract": "Modern processors have achieved significant performance enhancements through the implementation of speculative execution. These enhancements stem from hardware optimizations that not only improve performance but also introduce side channels, which are exploited to undermine the system's security model. Following the discovery of Spectre, which revealed that speculative execution pipelines could bypass security boundaries, nearly all microarchitectural structures and hardware optimizations have become targets for exploitation. In the wake of these attacks, the immediate response from organizations releasing mitigation patches led to noticeable performance degradation overnight, without fully addressing the underlying issues. This paper provides a comprehensive review of architecture-agnostic attacks on modern computing systems, tracing their evolution from the initial emergence of Spectre to contemporary attacks targeting Apple Silicon. We detail the mechanisms of these attacks, the environments in which they are exploited, and their broader security implications. Furthermore, we analyze various mitigation strategies that have been proposed, acknowledging that these strategies often fail to fully resolve the issues and typically incur a performance cost. These mitigation patterns include proposed changes in operating systems, hardware, and compilers. This review aims to provide researchers and architects with the foundational knowledge needed to develop more effective mitigation strategies that address the vulnerabilities while minimizing performance overhead.",
+   "kind": "review",
+   "impact": 32
+  },
+  {
+   "id": "riscv-hw-security-review-ict4sd",
+   "title": "A Hardware Security Review of RISC-V",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Aman Pathak"
+   ],
+   "venue": "ICT Systems and Sustainability (ICT4SD 2025), Lecture Notes in Networks and Systems, Springer, Vol. 2 of the proceedings, pp. 409-422",
+   "venueShort": "ICT4SD 2025 (Springer LNNS)",
+   "year": 2025,
+   "publishedOnline": "2025-10-08",
+   "status": "published",
+   "indexing": "Scopus",
+   "doi": "10.1007/978-3-032-06665-7_38",
+   "url": "https://doi.org/10.1007/978-3-032-06665-7_38",
+   "pages": "409-422",
+   "glance": "A survey of attacks and defenses specific to RISC-V hardware, from cache side channels to fault injection.",
+   "problem": "RISC-V is an open, modular ISA now used from microcontrollers to data-center chips, and national programs in China (XiangShan) and India (SHAKTI, DIR-V) are investing in it. Its openness lets attackers study the design files, and it lacks standard security features that ARM and x86 have, such as a widely accepted TEE like TrustZone or SGX. This is a risk for finance, defense, medical and other security-critical uses.",
+   "why": "Side-channel, speculative and fault attacks were studied mostly on x86 and ARM, and their effect on RISC-V's modular design needed separate study. The RISC-V security work was spread across many papers on different cores and extensions. The authors wanted one review that maps known RISC-V vulnerabilities to proposed countermeasures, as a base for building secure RISC-V systems.",
+   "approach": "The review first surveys ten implementations: BOOM, CVA6, Shakti, StarFive VisionFive, SiFive processors, Rocket, PicoRV32, XiangShan, T-Head TH1520 and NEORV32. It then covers seven attack areas and their mitigations on RISC-V: cache and speculative side channels, power side channels (SPA, DPA, CPA), trusted execution environments (Sanctum, SMARTS, Dorami), secure boot and root of trust with PUFs, cryptographic ISA extensions including scalar AES and post-quantum accelerators, memory encryption, and electromagnetic fault injection.",
+   "results": [
+    "Surveys ten RISC-V implementations and seven attack-and-mitigation areas.",
+    "Notes that EMFI susceptibility rises at lower supply voltage and higher clock frequency, which makes fast RISC-V designs more exposed.",
+    "Reports a trace-verifier CFI defense against EMFI with 13.6% area, 3.5% memory and 9% power overhead.",
+    "Finds that RISC-V memory-encryption work is mostly FPGA-based and limited to single cores such as RocketChip, with little security analysis.",
+    "Concludes that the lack of standardized hardware security features in RISC-V remains a persistent risk, especially for IoT and low-power devices."
+   ],
+   "contributions": [
+    "An overview of open-source and commercial RISC-V implementations relevant to security research.",
+    "A RISC-V specific map of attacks and mitigations across seven areas.",
+    "Identification of gaps, including the absence of a standard TEE and limited memory-encryption studies.",
+    "A starting point for researchers building secure RISC-V designs."
+   ],
+   "keywords": [
+    "RISC-V",
+    "Hardware Security",
+    "Side-Channel Attacks",
+    "Speculative Execution"
+   ],
+   "abstract": "RISC-V is an open-source Instruction Set Architecture (ISA) designed with a modular and extensible structure, allowing for customizable implementations. Its simplified base ISA, combined with optional standard and custom extensions, provides flexibility for a wide range of computing applications, from embedded systems to high-performance computing. Its open design accelerates innovation and customization but also introduces security challenges by exposing the architecture to potential attacks. While RISC-V offers significant advantages, its lack of standardized security features compared to proprietary ISAs like ARM and x86 highlights persistent risks, particularly in security-critical applications. For this reason, scrutiny of RISC-V's security is crucial due to its widespread use in academia and its adoption by countries like China and India, who are looking to benefit from its open nature. We review the current security challenges in RISC-V, examining key vulnerabilities that exist in areas such as the microarchitecture, trusted execution environments, secure enclaves, secure boot, cryptographic instruction set architectures, memory encryption, and electromagnetic fault injection attacks. This review aims to cater to the needs of modern researchers for the development and implementation of the RISC-V ISA in a secure manner.",
+   "kind": "review",
+   "impact": 31
+  },
+  {
+   "id": "modern-hw-security-arxiv",
+   "title": "Modern Hardware Security: A Review of Attacks and Countermeasures",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay"
+   ],
+   "venue": "arXiv preprint arXiv:2501.04394 (cs.CR; cs.AR)",
+   "venueShort": "arXiv",
+   "year": 2025,
+   "submitted": "2025-01-08",
+   "status": "preprint",
+   "indexing": "arXiv",
+   "doi": "10.48550/arXiv.2501.04394",
+   "url": "https://arxiv.org/abs/2501.04394",
+   "pages": "25 pages",
+   "glance": "A 25-page review of hardware attacks and defenses: side channels, memory encryption, secure boot, PUFs, RISC-V.",
+   "problem": "Cloud services, smart devices and IoT have made hardware a common target. Attacks such as Spectre and Meltdown, power analysis, voltage glitching, electromagnetic analysis and fault injection extract secrets from the physical behavior of chips. Defending against them requires designers to understand many separate attack classes at once.",
+   "why": "Hardware security knowledge was scattered across cache side channels, power analysis, memory encryption, secure enclaves, cryptographic ISAs, secure boot, PUFs and fault injection, each with its own literature. The authors wrote one review that connects attacks to mitigations across these areas, with a dedicated section on RISC-V because its openness and extensibility raise new problems. It also served as the literature base for my doctoral work on RISC-V side-channel security.",
+   "approach": "The paper first explains the concepts behind each area: cache organization and side channels, power side channels (SPA, DPA, CPA, template attacks), memory encryption (confidentiality, granularity, key management, masking, rekeying), secure enclaves, cryptographic ISAs, secure boot and root of trust, PUFs and hardware fault injection. It then reviews attacks and their mitigations for speculative execution, DPA, memory, secure enclaves, secure boot and root of trust, and fault injection. A final section focuses on RISC-V: speculative execution, power analysis, memory encryption and cryptographic ISA extensions.",
+   "results": [
+    "Covers eight hardware security areas and pairs each attack class with its mitigation patterns.",
+    "Draws on a bibliography of 373 references.",
+    "Concludes that isolation, secure microcode updates, speculative execution controls, cache partitioning, randomized execution, masking and frequent rekeying are needed together.",
+    "My most cited work: 41 citations on Google Scholar and 27 on Semantic Scholar as of October 2026."
+   ],
+   "contributions": [
+    "A single review spanning cache, power and EM side channels, memory encryption, enclaves, crypto ISAs, secure boot, PUFs and fault injection.",
+    "A structured pairing of attacks with countermeasures in each area.",
+    "A dedicated analysis of security challenges in the RISC-V architecture.",
+    "A reference for researchers and designers building side-channel resistant hardware."
+   ],
+   "keywords": [
+    "Hardware Security",
+    "Cyber-security",
+    "Cache Side Channels",
+    "Cryptographic Instruction Set Extensions",
+    "Fault Injection",
+    "Memory Encryption",
+    "Power Analysis Attacks",
+    "RISC-V",
+    "Secure Boot",
+    "Side-Channel Resistant Design",
+    "Speculative Execution"
+   ],
+   "abstract": "With the exponential rise in the use of cloud services, smart devices, and IoT devices, advanced cyber attacks have become increasingly sophisticated and ubiquitous. Furthermore, the rapid evolution of computing architectures and memory technologies has created an urgent need to understand and address hardware security vulnerabilities. In this paper, we review the current state of vulnerabilities and mitigation strategies in contemporary computing systems. We discuss cache side-channel attacks (including Spectre and Meltdown), power side-channel attacks (such as Simple Power Analysis, Differential Power Analysis, Correlation Power Analysis, and Template Attacks), and advanced techniques like Voltage Glitching and Electromagnetic Analysis to help understand and build robust cybersecurity defense systems and guide further research. We also examine memory encryption, focusing on confidentiality, granularity, key management, masking, and re-keying strategies. Additionally, we cover Cryptographic Instruction Set Architectures, Secure Boot, Root of Trust mechanisms, Physical Unclonable Functions, and hardware fault injection techniques. The paper concludes with an analysis of the RISC-V architecture's unique security challenges. The comprehensive analysis presented in this paper is essential for building resilient hardware security solutions that can protect against both current and emerging threats in an increasingly challenging security landscape.",
+   "kind": "preprint",
+   "impact": 30
+  },
+  {
+   "id": "drebin-duplicates-apcc",
+   "title": "Duplicates in the Drebin Dataset and Reduction in the Accuracy of the Malware Detection Models",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay",
+    "Hemant Rathore",
+    "Lokesh Kumar"
+   ],
+   "venue": "26th IEEE Asia-Pacific Conference on Communications (APCC 2021), IEEE, pp. 161-165",
+   "venueShort": "IEEE APCC 2021",
+   "year": 2021,
+   "status": "published",
+   "indexing": "CORE C; IEEE Xplore; DBLP",
+   "doi": "10.1109/apcc49754.2021.9609892",
+   "url": "https://doi.org/10.1109/apcc49754.2021.9609892",
+   "pages": "161-165",
+   "glance": "Shows that over half of Drebin's Android malware samples are duplicates, which inflates reported detection accuracy.",
+   "problem": "Drebin is one of the most used Android malware datasets for training and comparing machine-learning detectors. If many malicious samples are copies of each other, the same app can appear in both training and test sets. Reported accuracy then measures memorization rather than detection of new malware.",
+   "why": "A frequency table of Dalvik opcodes in Drebin suggested an unusually large number of near-identical malicious files. Many published detectors reported high accuracy on Drebin without checking for this. The authors wanted to measure how many duplicates exist and how much they distort the reported results.",
+   "approach": "The authors used a fitting factor measure on opcode occurrence to find duplicate malicious files in Drebin. They then trained popular detectors with and without the duplicates, using all features, the top 26 features selected by Information Gain, and 26 features learned by an Auto-Encoder. Classifiers tested were Random Forest, Decision Tree, Bagging, Gradient Boost, XGBoost and a Deep Neural Network.",
+   "results": [
+    "51.57% of malicious samples in Drebin have one or more duplicates.",
+    "Random Forest accuracy drops by 4.2% with all features, 5.3% with the top 26 IG features and 8.8% with the AE features once duplicates are removed.",
+    "The largest drop, 12.2%, is for the Deep Neural Network with IG-selected features.",
+    "Conclusion: earlier reported Drebin-based detection accuracy is exaggerated and may mislead the field.",
+    "Cited 11 times on Google Scholar (10 on OpenAlex) as of October 2026."
+   ],
+   "contributions": [
+    "Quantified duplication among Drebin malware samples using opcode-based fitting factor.",
+    "Measured the accuracy loss of six classical and deep classifiers after deduplication.",
+    "Compared the effect across three feature sets: all features, Information Gain and Auto-Encoder.",
+    "Raised a dataset-hygiene warning for Android malware detection research."
+   ],
+   "keywords": [
+    "Android malware",
+    "Drebin",
+    "Duplicate samples",
+    "Dalvik opcodes",
+    "Machine learning",
+    "Deep learning",
+    "Malware detection"
+   ],
+   "abstract": "The Android operating system has constantly remained in the limelight, hence attracts the attention of cyber-criminals. Understanding the rising challenges, many researchers have bagged achievements by applying machine/deep learning techniques for the construction of malware detection models based on popular Drebin malware datasets. However, a cursory look at a table of the frequency of Dalvik opcodes leads us to believe that this dataset may have a massive number of duplicate malicious files. Hence, we used a technique called fitting factor to find the duplicate malicious files in the Drebin datasets on the basis of opcodes occurrence. We found that 51.57% malicious samples in the datasets have one or more duplicates. Hence, accordingly, we studied the performance of the popular detection models with and without duplicates with all the features, top 26 features engineered by Information Gain (IG) and Auto-Encoder (AE). The experimental results show that one of the most popular classical classifiers, the Random Forest classifier, shows a decline in accuracy by 4.2%, 5.3% and 8.8% with all features, top 26 features obtained by IG and AE respectively. To establish the observed facts we further extensively experimented with Decision Tree, Bagging, Gradient Boost, XG Boost, and Deep Neural Network. The most significant decline (12.2%) in accuracy was observed in the Deep Neural Network classifier with the features obtained by IG, i.e., the earlier reported performance of the malware detection models based on Drebin data is exaggerated, and consequently it may lead to a wrong direction in this field of research.",
+   "kind": "conference",
+   "impact": 22
+  },
+  {
+   "id": "revisable-machine-descriptions",
+   "title": "Revisable Machine Descriptions: Twenty-Four Facts a Running Guest Can Be Told Again",
+   "year": 2026,
+   "status": "under review",
+   "kind": "journal"
+  },
+  {
+   "id": "ternary-sigma-delta",
+   "title": "Straight-Through Training as Sigma-Delta Modulation: Exact Dither Penalties, Duty-Cycle Rounding, and Quantizer Design for Ternary Networks",
+   "year": 2026,
+   "status": "under review",
+   "kind": "journal"
+  },
+  {
+   "id": "xv6-line-by-line",
+   "title": "xv6, Line by Line: A Verified, Interactive Commentary and Lab Curriculum for Training Kernel Developers",
+   "year": 2026,
+   "status": "under review",
+   "kind": "journal"
+  },
+  {
+   "id": "opticc-distributed-builds",
+   "title": "opticc: Worker-Side Preprocessing, Communication-Aware Dispatch and a Shared Compile Cache for Distributed C/C++ Builds",
+   "year": 2026,
+   "status": "under review",
+   "kind": "journal"
+  },
+  {
+   "id": "near-miss-retrieval",
+   "title": "Near-Miss Retrieval: Contrastive Case Retrieval for Entity Disambiguation in Retrieval-Augmented Generation",
+   "year": 2026,
+   "status": "under review",
+   "kind": "conference"
+  },
+  {
+   "id": "surprisal-time-series",
+   "title": "Surprisal Is a Time Series: Prequential Calibration Auditing of Language Models with Zero-Shot Forecasting Foundation Models",
+   "year": 2026,
+   "status": "under review",
+   "kind": "conference"
+  },
+  {
+   "id": "parametric-knowledge-delta",
+   "title": "Parametric Knowledge Delta: Measuring, Compressing and Retrieving Knowledge Graphs Against a Language Model's Prior",
+   "year": 2026,
+   "status": "under review",
+   "kind": "conference"
+  },
+  {
+   "id": "knowledge-certificates",
+   "title": "Knowledge Certificates: Distribution-Free Guarantees on Which Facts Survive Quantization",
+   "year": 2026,
+   "status": "under review",
+   "kind": "conference"
+  }
+ ],
+ "blindReview": {
+  "count": 2,
+  "note": "under double-blind review; titles withheld until the decision, details on request"
+ },
+ "profiles": {
+  "scholar": "https://scholar.google.com/citations?user=sE2dRWIAAAAJ",
+  "hIndex": 2,
+  "orcid": "https://orcid.org/0000-0001-7590-1215",
+  "scopus": "https://www.scopus.com/authid/detail.uri?authorId=57426637300",
+  "semantic": "https://www.semanticscholar.org/author/2182578895"
+ }
+}

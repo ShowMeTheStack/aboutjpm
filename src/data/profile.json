@@ -1,0 +1,260 @@
+{
+ "name": "Jyotiprakash Mishra",
+ "handle": "jyotiprakash",
+ "roles": [
+  "Assistant Professor of Computer Science, KIIT",
+  "PhD candidate, BITS Pilani (thesis submitted)",
+  "Co-founder and CEO, ENineHQ Technologies"
+ ],
+ "tagline": "I break and fix processors, and I build the tools I wish I had as a student.",
+ "summary": "Computer scientist with sixteen years across enterprise software, healthcare technology, university teaching and hardware security research. My doctoral work at BITS Pilani is on the security of open RISC-V processors: microarchitectural side channels, memory encryption and hardware support for detecting malware. Before teaching I spent eight years in industry, as a Team Lead at Epic Systems in Madison and a Senior Member of Technical Staff at Oracle. I teach computer architecture, operating systems and programming at KIIT, and I build free, open teaching tools that show students what is really happening inside a machine.",
+ "contact": {
+  "email": "mail@jyotiprakash.org",
+  "blog": "https://blog.jyotiprakash.org",
+  "company": "https://eninehq.com",
+  "linkedin": "https://www.linkedin.com/in/mishrajp88/",
+  "github": "https://github.com/ShowMeTheStack"
+ },
+ "experience": [
+  {
+   "role": "Co-founder and CEO",
+   "org": "ENineHQ Technologies Pvt. Ltd.",
+   "url": "https://eninehq.com",
+   "from": "2022",
+   "to": "now",
+   "place": "Bhubaneswar, India",
+   "glance": "An engineering company across RISC-V silicon, clinical healthcare software and security research.",
+   "points": [
+    "Founded and lead an engineering company with three lines of work. The hardware arm designs custom silicon, RISC-V processors, FPGA prototypes and production-ready systems on chip, with a focus on open instruction sets and hardware security.",
+    "Healthcare software: clinical-grade systems including electronic health records, pharmacy management, laboratory information systems and patient-facing applications built for real medical workflows.",
+    "Security research consultancy: offensive security training, threat modelling, architecture reviews and support for academic research.",
+    "Develop and publish consumer software on the Google Play Store: utilities, emulators and learning apps."
+   ]
+  },
+  {
+   "role": "Assistant Professor (Senior Scale, Academic Level 11)",
+   "org": "Kalinga Institute of Industrial Technology (KIIT)",
+   "from": "Sep 2020",
+   "to": "now",
+   "place": "Bhubaneswar, India",
+   "glance": "Teach computer architecture, operating systems and programming; research in hardware security.",
+   "points": [
+    "Teach core computer science courses (computer architecture, operating systems and programming) to undergraduate and graduate students.",
+    "Conduct and publish research in hardware security, RISC-V, malware analysis and cryptography; present at international conferences.",
+    "Pursue research and industry funding; responsibility for examinations and faculty recruitment interviews."
+   ]
+  },
+  {
+   "role": "Team Lead",
+   "org": "Epic Systems",
+   "from": "Jul 2018",
+   "to": "Jan 2020",
+   "place": "Madison, Wisconsin, USA",
+   "glance": "Led the team building specialty healthcare software for Epic's international customers.",
+   "points": [
+    "Led the team developing specialty healthcare software for Epic's international customers.",
+    "Design and code reviews, development, appraisals and people management; weekly and quarterly progress reviews."
+   ]
+  },
+  {
+   "role": "Software Developer",
+   "org": "Epic Systems",
+   "from": "Jun 2016",
+   "to": "Jul 2018",
+   "place": "Madison, Wisconsin, USA",
+   "glance": "Java backend for Epic's Rover mobile app, on top of the Caché (M) database.",
+   "points": [
+    "Developed the Java backend serving medical data to the Android front end of Epic's Rover software, including Java bindings for operations on the Caché (M) tree-structured database.",
+    "Designed backend software for complex data migration between patient contacts; improved performance and supportability with QA and performance engineers.",
+    "Evaluated architectural alternatives in early design and delivered several large medical projects while overseeing other developers."
+   ]
+  },
+  {
+   "role": "Software Development Intern",
+   "org": "Epic Systems",
+   "from": "Jun 2015",
+   "to": "Aug 2015",
+   "place": "Madison, Wisconsin, USA",
+   "glance": "Mobile healthcare apps Rover and Haiku, on iOS and Android.",
+   "points": [
+    "Summer internship during the MS on Epic's mobile healthcare applications, Rover and Haiku, on iOS and Android. Returned full time on graduating."
+   ]
+  },
+  {
+   "role": "Graduate Teaching Assistant",
+   "org": "University of Wisconsin-Madison",
+   "from": "Aug 2014",
+   "to": "May 2016",
+   "place": "Madison, Wisconsin, USA",
+   "glance": "TA for Introduction to Operating Systems throughout the MS.",
+   "points": [
+    "Taught operating systems concepts, set and graded examinations and weekly assignments, and held office hours."
+   ]
+  },
+  {
+   "role": "Senior Member of Technical Staff",
+   "org": "Oracle",
+   "from": "Jun 2010",
+   "to": "Mar 2014",
+   "place": "Bangalore, India",
+   "glance": "Oracle Web Services Manager and Oracle Entitlements Server: securing enterprise web services.",
+   "points": [
+    "Wrote specifications for and developed modules of Oracle Web Services Manager (OWSM), which secures SOAP web services across WebLogic, JBoss and WebSphere.",
+    "Implemented management APIs of Oracle Entitlements Server (OES) for fine-grained authorization; fixed more than 200 bugs in time-constrained release cycles.",
+    "Promoted to Senior Member of Technical Staff."
+   ]
+  },
+  {
+   "role": "Software Development Intern (Practice School II)",
+   "org": "Yahoo! Labs",
+   "from": "2009",
+   "to": "2010",
+   "place": "Bangalore, India",
+   "glance": "Extracting lists and tables from arbitrary web pages.",
+   "points": [
+    "Built Java software to find lists and tables in arbitrary web documents and extract them as maps, in the Web Extraction Technologies project.",
+    "Developed a document annotation system for tagging, searching and highlighting words, sentences and paragraphs in web documents."
+   ]
+  },
+  {
+   "role": "Summer Research Intern",
+   "org": "Bhabha Atomic Research Centre, Computer Division",
+   "from": "2008",
+   "to": "2008",
+   "place": "Mumbai, India",
+   "glance": "One of 16 students chosen nationwide; structured 3D grids on spline surfaces.",
+   "points": [
+    "Selected among 16 students nationwide for BARC's summer internship programme.",
+    "Designed an iterative algorithm to generate structured 3D grids on parametric surfaces bounded by four cubic splines; validated on a BARC supercomputer."
+   ]
+  }
+ ],
+ "education": [
+  {
+   "degree": "PhD in Computer Science",
+   "org": "BITS Pilani",
+   "from": "2021",
+   "to": "2026",
+   "status": "Thesis submitted; award expected December 2026",
+   "glance": "Side-channel security of open-source RISC-V processors. Advisor: Prof. Sanjay K. Sahay.",
+   "points": [
+    "Thesis: An Investigation of Side-Channel Security in Open-Source RISC-V Processors.",
+    "Sixteen publications, six published patent applications and two textbooks during the doctorate."
+   ]
+  },
+  {
+   "degree": "MS in Computer Science",
+   "org": "University of Wisconsin-Madison",
+   "from": "2014",
+   "to": "2016",
+   "status": "GPA 3.9 / 4.0",
+   "glance": "Systems. Fully funded through a teaching assistantship.",
+   "points": [
+    "Graduate study concentrated in systems.",
+    "Fully funded through a teaching assistantship guaranteed in the admission offer; TA for Introduction to Operating Systems throughout."
+   ]
+  },
+  {
+   "degree": "BE (Hons.) in Computer Science",
+   "org": "BITS Pilani",
+   "from": "2006",
+   "to": "2010",
+   "status": "CGPA 9.53 / 10, with distinction",
+   "glance": "A perfect 10.0 in the first year; course topper in six courses.",
+   "points": [
+    "Perfect 10.0 across the first year; graduated with distinction.",
+    "Course topper in Advanced Computer Organization, Microprocessor Programming and Interfacing, Programming Languages and Compiler Construction, Discrete Mathematics, Computational Physics, and Embedded Systems Design.",
+    "Final-semester project with Dr. Sanjay K. Sahay on network security: PKI, TLS, VPNs, firewalls and Kerberos, with working demonstrations in C on GNU/Linux and a study of netfilter/iptables.",
+    "Practice School at Bhabha Atomic Research Centre (PS-I) and Yahoo! Labs, Bangalore (PS-II)."
+   ]
+  },
+  {
+   "degree": "Higher Secondary (Science)",
+   "org": "CHSE Odisha, BJB College",
+   "from": "2004",
+   "to": "2006",
+   "status": "4th in the state",
+   "glance": "Ranked 4th in Odisha.",
+   "points": []
+  },
+  {
+   "degree": "ICSE (Class 10)",
+   "org": "BSHS, Puri",
+   "from": "1998",
+   "to": "2004",
+   "status": "School topper, 96%",
+   "glance": "School topper with 96%.",
+   "points": []
+  }
+ ],
+ "honors": [
+  "4th rank statewide, Council of Higher Secondary Education (Science) examination, Odisha, 2006.",
+  "School topper, ICSE (96%), 2004.",
+  "Among the top 300 nationwide, National Standard Examination in Chemistry (NSEC), 2005.",
+  "Perfect 10.0 CGPA in the first year at BITS Pilani; course topper in several core courses.",
+  "Selected among 16 students nationwide for the BARC summer research programme, 2008."
+ ],
+ "skills": [
+  {
+   "area": "Research",
+   "items": [
+    "hardware security",
+    "microarchitectural side channels",
+    "memory encryption",
+    "malware detection",
+    "cryptography",
+    "formal verification"
+   ]
+  },
+  {
+   "area": "Architecture and hardware",
+   "items": [
+    "RISC-V ISA and microarchitecture",
+    "Verilog / RTL",
+    "FPGA",
+    "embedded systems",
+    "x86 and AVR assembly"
+   ]
+  },
+  {
+   "area": "Systems",
+   "items": [
+    "OS and kernel development (xv6, Linux)",
+    "systems programming in C",
+    "cycle-accurate emulation"
+   ]
+  },
+  {
+   "area": "Software engineering",
+   "items": [
+    "Java",
+    "Spring Boot",
+    "microservices",
+    "Docker",
+    "system design",
+    "code review",
+    "team leadership"
+   ]
+  },
+  {
+   "area": "Teaching",
+   "items": [
+    "computer architecture",
+    "operating systems",
+    "programming",
+    "cryptography",
+    "curriculum and examination design"
+   ]
+  }
+ ],
+ "languages": [
+  "English (fluent)",
+  "Odia (native)",
+  "Hindi (fluent)"
+ ],
+ "years": {
+  "industry": 8,
+  "teaching": 8,
+  "total": 16
+ }
+}

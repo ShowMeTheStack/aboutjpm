@@ -1,0 +1,122 @@
+{
+ "title": "An Investigation of Side-Channel Security in Open-Source RISC-V Processors",
+ "degree": "Doctor of Philosophy",
+ "institution": "Birla Institute of Technology and Science (BITS) Pilani, K. K. Birla Goa Campus, Department of Computer Science and Information Systems",
+ "advisor": "Prof. Sanjay K. Sahay",
+ "year": 2026,
+ "status": "Thesis submitted (2026); degree award expected December 2026",
+ "glance": "Finds new side channels in open RISC-V cores, builds a fast emulator to test defenses, and designs a verified memory encryption engine.",
+ "problem": "RISC-V is open, extensible and being adopted at national scale, including India's SHAKTI and VEGA programmes. It ships without the standardized security hardening that decades of commercial pressure added to x86 and ARM, and many security-relevant behaviors (PMP, LR/SC atomics, WARL registers, performance counters) are implementation-defined. The side-channel posture of real open-source RISC-V cores was therefore largely unknown.",
+ "why": "Three gaps motivated the work. No study had systematically characterized RISC-V-specific side channels across many real cores and confirmed them on silicon. No tool could evaluate microarchitectural defenses at cycle-level fidelity and still boot Linux and run large sweeps in reasonable time. And no open RISC-V memory encryption design combined confidentiality, integrity and gate-level, formally verified higher-order masking at a deployable cost.",
+ "approach": "The thesis follows a discovery, evaluation and defense arc built on open, reproducible artifacts: published open cores, the Chipyard flow, cycle-model emulation and commodity Xilinx FPGA silicon. Discovery measures 23 side-channel classes on a six-core corpus with TVLA and confidence-bounded proofs of concept, then carries them to an FPGA. Evaluation builds ARCHER, an emulator calibrated against Chipyard RTL, to reproduce known attacks and compare defenses quickly. Defense designs PACE, a memory encryption engine whose masked core is proven secure by three formal tools and realized on FPGA.",
+ "thesisStatement": "The openness of the RISC-V instruction-set architecture makes the security of its implementations against side-channel attacks a problem that can, and therefore must, be addressed empirically and end-to-end: the architecture's distinctive features give rise to novel side channels that can be discovered and measured on real cores; those channels and their defences can be evaluated at cycle-model fidelity with open tooling; and the resulting defensive knowledge can be realised as formally verified, low-overhead hardware, closing the loop from discovery, through evaluation, to defence.",
+ "researchQuestions": [
+  "RQ1 (Discovery): Which side channels are specific to open-source RISC-V cores, how prevalent are they from in-order to wide out-of-order designs, and do they survive the move from simulation to silicon?",
+  "RQ2 (Evaluation): Can one emulation environment model microarchitectural timing faithfully enough to reproduce known attacks and evaluate defenses, yet run fast enough for large sweeps and full OS boots?",
+  "RQ3 (Defense): Can an in-line memory encryption engine for RISC-V provide confidentiality, integrity and formally verified nth-order power-analysis resistance at low overhead, validated on FPGA silicon?"
+ ],
+ "chapters": [
+  {
+   "number": 1,
+   "title": "Introduction",
+   "summary": "Opens with how Meltdown and Spectre in 2018 moved trust below the software line, then explains why RISC-V's openness is both a strength and a new attack surface. It reviews microarchitectural and power side channels and why main memory sits outside the trust boundary. It states three gaps, three research questions and the thesis statement, and fixes the scope to hardware side channels on open cores.",
+   "results": [
+    "Three research questions organized as discovery, evaluation and defense.",
+    "Scope: microarchitectural timing and power leakage on open RISC-V; invasive and fault attacks excluded."
+   ]
+  },
+  {
+   "number": 2,
+   "title": "Literature Review",
+   "summary": "Surveys cache and speculative-execution attacks, power and electromagnetic side channels, memory encryption and integrity, trusted execution, cryptographic ISAs, secure boot and fault injection. It then narrows to the RISC-V security literature. The synthesis argues the field is mature on closed x86 and ARM silicon but thin and largely unvalidated on real open RISC-V hardware.",
+   "results": [
+    "Identifies Gap 1: no silicon-validated study of RISC-V-specific channels.",
+    "Identifies Gap 2: no evaluation tool that is both cycle-faithful and fast.",
+    "Identifies Gap 3: no practical, formally verified memory encryption for RISC-V."
+   ]
+  },
+  {
+   "number": 3,
+   "title": "Novel Side-Channel Attacks on Open-Source RISC-V Cores",
+   "summary": "Answers RQ1 by measuring 23 side-channel classes across Rocket, VexiiRiscv, CVA6 and three BOOM widths, plus two dual-hart SoCs. Six classes are new and come from RISC-V's own features such as PMP, WARL registers, the page-table-walker fault path and LR/SC reservations. Each channel is quantified with TVLA and Wilson confidence intervals and then confirmed on a Zedboard FPGA. Eight RTL and firmware mitigations close the channels at small measured area and power cost.",
+   "results": [
+    "23 channels: 6 novel (Tier A), 7 first cross-privilege RISC-V instances (Tier B), 10 known classes (Tier C).",
+    "PMPectre: PMP-denied loads forward speculatively on out-of-order cores, timing gap up to 126 cycles, zero faults raised.",
+    "84 unit-level silicon measurements and an 11-experiment whole-core battery; amplification 2.1x to 43x on silicon.",
+    "6 of 8 mitigations cost at most 0.8% LUT area; all 8 change dynamic power by under 2 mW."
+   ],
+   "papers": [
+    "novel-riscv-sca"
+   ]
+  },
+  {
+   "number": 4,
+   "title": "ARCHER: A Cycle-Accurate RISC-V Emulator for Side-Channel and Memory-Encryption Research",
+   "summary": "Answers RQ2 with ARCHER, an RV64IMAFDC emulator with pluggable in-order, out-of-order and SMT cores, coherent caches and up to 16 harts, all configured through INI files. It boots Linux 6.6 in under three minutes and is calibrated against Chipyard's fab-ready RTL. On it, ten classical attacks are reproduced and evaluated against thirteen speculation policies, seven of them new. It also hosts AMES, a bus-layer memory encryption engine that is the simulation precursor to PACE.",
+   "results": [
+    "3.7x faster than gem5 DerivO3CPU (geometric mean) on bare-metal microbenchmarks.",
+    "Mean 9.4% cycle-count deviation from Chipyard RTL at a median 88x host-throughput advantage over Verilator.",
+    "Every configured defense drives leakage to zero at under 0.3% IPC loss on a full Linux boot.",
+    "Seven new speculation-defense policies across three mechanism families."
+   ],
+   "papers": [
+    "archer"
+   ]
+  },
+  {
+   "number": 5,
+   "title": "PACE: A Page-Adaptive, DPA-Resistant Memory-Encryption Engine for RISC-V",
+   "summary": "Answers RQ3 with PACE, a TileLink engine placed between the last-level cache and memory that picks a protection policy per physical page from page-table bits. Counter-mode keystreams are precomputed while lines are cached, so evictions only XOR. Fresh re-keying and domain-oriented masking protect the engine's key against power analysis, and the masked Ascon-p S-box is proven secure by three formal tools. The engine runs on Rocket and BOOM and is placed, routed and programmed on a Xilinx XC7Z020.",
+   "results": [
+    "Writeback latency reduced 9x (90 to 10 cycles); with integrity, 320 to 10 cycles.",
+    "Masked core proven order-d secure by COCO, PROLEAD and SILVER (d = 1, 2), and by COCO through d = 3.",
+    "Application-level overhead within measurement noise of plaintext for cache-resident workloads; masking adds no cycles.",
+    "Measured trace-amplification exponents 1.92/3.70/5.40/6.97 match the predicted 2(d+1) law."
+   ],
+   "papers": [
+    "pace"
+   ]
+  },
+  {
+   "number": 6,
+   "title": "Conclusions and Future Work",
+   "summary": "Revisits the three research questions and answers each one affirmatively with the evidence of Chapters 3 to 5. It states the limits plainly: results are cycle-model-relative, rest on open cores and FPGAs rather than custom tape-outs, and PACE's DPA evidence is formal and simulated because the on-chip campaign is sensitivity-limited. It sets out future work on a physical break-then-fix, silicon-anchored calibration of ARCHER, and new RISC-V extensions.",
+   "results": [
+    "Future work: co-placed sensor array and 10^5 to 10^6 trace campaign for PACE.",
+    "Future work: extend discovery to vector, hypervisor and scalar-crypto extensions and to multi-socket coherence.",
+    "Future work: compose all eight mitigations on one core and measure combined cost."
+   ]
+  }
+ ],
+ "contributions": [
+  "A simulation-to-silicon characterization of 23 side-channel classes on six open RISC-V cores, six of them new primitives rooted in RISC-V-specific features.",
+  "Eight RTL and firmware mitigations with measured area, power, portability and software cost.",
+  "ARCHER, an open, INI-configurable cycle-level RISC-V emulator calibrated against Chipyard RTL, with seven new speculation-defense policies and the AMES memory encryption engine.",
+  "PACE, a page-adaptive, cache-anchored memory encryption engine with confidentiality, integrity and nth-order DPA resistance, formally verified at the netlist level and realized on FPGA.",
+  "Methodology: a three-tier novelty taxonomy, a statistical-validity treatment of TVLA with Wilson intervals, and a design checklist for RISC-V implementers."
+ ],
+ "keyResults": [
+  "23 side channels across 6 cores; 6 have no x86 or ARM analogue.",
+  "PMPectre timing gap up to 126 cycles with zero architectural faults.",
+  "6 of 8 mitigations at no more than 0.8% LUT area; all 8 under 2 mW power change.",
+  "ARCHER: Linux boot under 3 minutes, 3.7x faster than gem5, 9.4% mean deviation from Chipyard RTL.",
+  "Classical Spectre-family defenses reach zero leakage at under 0.3% IPC loss.",
+  "PACE: 9x lower writeback latency; masked core proven secure through order 3; overhead within noise for cache-resident workloads."
+ ],
+ "publications": [
+  "pace",
+  "archer",
+  "novel-riscv-sca"
+ ],
+ "defenseStory": [
+  "Correct silicon is not safe silicon: the ISA fixes results, but timing, caches and predictors are left to the implementer, and that gap leaks.",
+  "RISC-V is open and spreading fast, but it has no standard side-channel hardening and several of its features are implementation-defined.",
+  "Discovery: 23 channels measured on six open cores, six of them new. PMP, the RISC-V memory protection unit, can be bypassed speculatively.",
+  "The channels are real: they reproduce on FPGA silicon, often stronger than in simulation, and eight small RTL fixes close them.",
+  "Evaluation: ARCHER boots Linux in under three minutes and tests a defense in minutes instead of hours, within 9.4% of real RTL timing.",
+  "Defense: PACE encrypts memory per page and hides the cipher's latency inside the cache, cutting writeback cost 9x.",
+  "Its key engine is masked and proven secure by three independent formal tools, then built on an FPGA.",
+  "Result: the security of an open ISA can be measured, reasoned about and built, at low cost."
+ ],
+ "statusShort": "submitted"
+}

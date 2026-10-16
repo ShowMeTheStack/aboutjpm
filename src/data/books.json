@@ -1,0 +1,382 @@
+{
+ "books": [
+  {
+   "id": "cryptographic-foundations",
+   "title": "Cryptographic Foundations",
+   "subtitle": "Symmetric and Public-Key Cryptography, Hashes, Digital Signatures, and Protocols",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay"
+   ],
+   "publisher": "De Gruyter Brill, Berlin",
+   "series": "De Gruyter Textbook",
+   "isbn": "978-3-11-226702-8",
+   "isbnPaperback": "978-3-11-226702-8",
+   "isbnEbook": "978-3-11-226703-5",
+   "status": "Approved; in proofreading (listed by the publisher as 'Ahead of Publication')",
+   "expected": "Jan/Feb 2027 per the author's CV; the publisher page lists a planned publication date of December 28, 2026 for paperback and eBook",
+   "url": "https://www.degruyterbrill.com/document/isbn/9783112267028/html",
+   "pages": "10 front-matter pages + 471 main pages (publisher); 188 illustrations, 27 tables",
+   "audience": "Undergraduates, Postgraduates (publisher listing)",
+   "publisherKeywords": [
+    "Applied Cryptography",
+    "Post-Quantum Cryptography",
+    "Elliptic-Curve Cryptography",
+    "Python Cryptography",
+    "Security Proofs and Reductions"
+   ],
+   "glance": "A graduate textbook on modern cryptography that proves each primitive, then has the reader implement it in Python.",
+   "why": "The book grew out of cryptography courses taught at BITS Pilani K. K. Birla Goa Campus and the research collaboration between the two authors. The authors wanted readers to understand the libraries they call, not treat them as a black box of 'use AES-GCM and do not think about it'. Existing books tend to be either theory-first (Katz and Lindell, Boneh and Shoup) or engineering-first (Schneier, Aumasson); this one aims to sit between them.",
+   "audienceDetail": "Advanced undergraduate and beginning graduate students in computer science, mathematics or engineering who meet cryptography for the first time, and working engineers who want the foundations of the libraries they use. It assumes basic programming (ideally Python) and a first course in discrete mathematics or linear algebra; modular arithmetic, finite fields, probability, security games, reductions and elliptic curves are developed from first principles.",
+   "different": [
+    "Every scheme gets a precise security definition and, where appropriate, a proof or reduction, and also code: theory, practice and implementation in each chapter.",
+    "Post-quantum standards (ML-KEM, ML-DSA, SLH-DSA, and hybrid X25519 + ML-KEM-768) are taught inside the public-key chapters, not in a separate add-on chapter.",
+    "667 graded exercises (about fifty per chapter, rated one to three stars) in four kinds: practice, exercises, problems and programming tasks checked against published test vectors.",
+    "Appendix B is a runnable Python and SageMath cookbook that the programming exercises build on.",
+    "States openly which results are proved and which rest on heuristics such as the random oracle model; historical attributions, standard numbers and quoted results were audited against primary sources."
+   ],
+   "description": "Publisher text: a graduate-level textbook that introduces students and working engineers to the mathematics and practice of modern cryptography, from classical ciphers and security definitions through symmetric primitives (block ciphers, modes, hash functions, MACs) to public-key cryptography (RSA, elliptic curves, digital signatures, key exchange, PKI), with post-quantum cryptography (ML-KEM, ML-DSA, SLH-DSA) integrated throughout the public-key chapters rather than confined to a separate section.",
+   "toc": [
+    {
+     "part": "Part I: Foundations",
+     "chapters": [
+      {
+       "n": 1,
+       "title": "Introduction to Cryptography",
+       "summary": "Why cryptography matters, a short history of secret writing, symmetric versus asymmetric schemes, and how to think about security."
+      },
+      {
+       "n": 2,
+       "title": "Mathematical Foundations",
+       "summary": "Modular arithmetic, GCDs, groups, Euler and Fermat, the CRT, finite fields, primality and factoring, and probability."
+      },
+      {
+       "n": 3,
+       "title": "Defining Security",
+       "summary": "Security games, semantic security and indistinguishability, unforgeability, reduction proofs and pseudorandomness."
+      }
+     ]
+    },
+    {
+     "part": "Part II: Symmetric Cryptography",
+     "chapters": [
+      {
+       "n": 4,
+       "title": "Encryption and the Quest for Secrecy",
+       "summary": "Perfect secrecy, stream ciphers from classical designs to ChaCha20, and their semantic security."
+      },
+      {
+       "n": 5,
+       "title": "Block Ciphers",
+       "summary": "SP networks and Feistel networks, DES as a case study, AES, and an overview of attacks."
+      },
+      {
+       "n": 6,
+       "title": "Modes of Operation and Authenticated Encryption",
+       "summary": "Classical modes and CTR, why encryption alone is not enough, AES-GCM, ChaCha20-Poly1305 and nonce-misuse resistance."
+      },
+      {
+       "n": 7,
+       "title": "Cryptographic Hash Functions",
+       "summary": "The birthday attack, Merkle-Damgard, the SHA family, SHA-3 and the sponge, and applications of hashing."
+      },
+      {
+       "n": 8,
+       "title": "Message Authentication Codes",
+       "summary": "HMAC, block-cipher MACs, universal hashing and polynomial MACs, and combining encryption with authentication."
+      }
+     ]
+    },
+    {
+     "part": "Part III: Public-Key Cryptography",
+     "chapters": [
+      {
+       "n": 9,
+       "title": "Public-Key Encryption",
+       "summary": "The key distribution problem, RSA and attacks on textbook RSA, OAEP, ElGamal, hybrid encryption, and ML-KEM."
+      },
+      {
+       "n": 10,
+       "title": "Elliptic Curve Cryptography",
+       "summary": "Curves over the reals and finite fields, the ECDLP, scalar multiplication, standard and modern curves, and key sizes."
+      },
+      {
+       "n": 11,
+       "title": "Digital Signatures",
+       "summary": "RSA, Schnorr, DSA and ECDSA, EdDSA and Ed25519, compared, with the post-quantum ML-DSA and SLH-DSA."
+      },
+      {
+       "n": 12,
+       "title": "Key Exchange",
+       "summary": "Diffie-Hellman and ECDH, the man-in-the-middle problem, KEMs versus key agreement, forward secrecy, and hybrid X25519 + ML-KEM."
+      },
+      {
+       "n": 13,
+       "title": "Certificates and Public-Key Infrastructure",
+       "summary": "Digital certificates, PKI, Certificate Transparency, alternative trust models, and Let's Encrypt with automated certificate management."
+      }
+     ]
+    },
+    {
+     "part": "Appendices",
+     "chapters": [
+      {
+       "n": "A",
+       "title": "Proof Techniques in Cryptography",
+       "summary": "From direct proof and induction to reductions, simulation, hybrid arguments, game hopping and the random oracle method."
+      },
+      {
+       "n": "B",
+       "title": "Python and SageMath Setup Guide",
+       "summary": "Environment setup, core libraries and a programming cookbook for every primitive in the book."
+      }
+     ]
+    }
+   ],
+   "short": "Cryptographic Foundations"
+  },
+  {
+   "id": "riscv-xv6",
+   "title": "RISC-V Architecture and XV6",
+   "subtitle": "Instruction Set Architecture, Systems Programming, and Kernel Development",
+   "authors": [
+    "Jyotiprakash Mishra",
+    "Sanjay K. Sahay"
+   ],
+   "publisher": "De Gruyter Brill, Berlin",
+   "isbn": "978-3-11-227456-9",
+   "status": "Approved; in proofreading (final manuscript submitted)",
+   "expected": "Jan/Feb 2027 (per the author's CV)",
+   "pages": "649 pages in the submitted manuscript PDF (final-submission); publisher page count not found",
+   "glance": "A bottom-up textbook from the first RV64 instruction to reading and modifying the xv6 operating system kernel.",
+   "why": "The book grew out of a gap students run into: architecture texts teach how instructions are encoded and executed but say little about privilege levels, while operating-systems texts, including the well-known xv6 commentary, show kernel code but assume the reader already knows what a CSR is, why MRET restores the program counter, or how a page-table walk interacts with Physical Memory Protection. Without that, kernel code reads like magic spells. This book teaches the hardware first so the kernel makes sense.",
+   "audienceDetail": "Readers who can program in C and have had an introductory CS course. Three groups: undergraduate or early-graduate students in computer architecture, operating systems, or a combined course; working engineers moving to RISC-V who need the privileged specification explained rather than cited; and self-learners who have read the xv6 source and want to see what lies underneath it. No prior assembly or operating-systems course is required.",
+   "different": [
+    "Teaches the machine before the software that controls it: the reader learns how Sv39 hardware walks a page table before reading the kernel routine that builds one.",
+    "Every line of xv6 assembly, every CSR write and every interrupt handler is cross-referenced to the chapter that explains the hardware; each xv6 chapter opens with a box of the RISC-V features it depends on.",
+    "Build it yourself first: readers write a bare-metal timer interrupt handler and map a page by hand on QEMU before seeing how xv6 does it.",
+    "Treats trap routing exhaustively (delegation, enable and pending gates, edge cases), with a running mstatus diagram filled in across chapters; the traps chapter is the longest in the book.",
+    "Ends with porting xv6 from QEMU to real RISC-V boards, plus five reference appendices and a sequence of suggested labs."
+   ],
+   "description": "Back-cover text: a bottom-up guide that takes a reader from the very first RISC-V instruction to a working operating system they can read and modify. It teaches the RV64GC instruction set and the standard extensions, then the privileged architecture in depth (traps and interrupt routing, the CLINT and PLIC, supervisor mode, Sv39 virtual memory, physical memory protection, boot, and the SBI) before walking through the xv6 kernel chapter by chapter.",
+   "toc": [
+    {
+     "part": "Part I: The Base Machine",
+     "chapters": [
+      {
+       "n": 1,
+       "title": "Why RISC-V?",
+       "summary": "A short history of instruction sets, what makes RISC-V different, its ecosystem, and how to read the specification."
+      },
+      {
+       "n": 2,
+       "title": "Bits, Bytes, and Binary",
+       "summary": "Number systems, two's complement, bitwise operations and memory layout."
+      },
+      {
+       "n": 3,
+       "title": "The Core RV64I Instructions",
+       "summary": "The register file, instruction formats, arithmetic and logic, LUI and AUIPC, and encoding by hand."
+      },
+      {
+       "n": 4,
+       "title": "Control Flow",
+       "summary": "Branches, jumps, the call stack, the calling convention, recursion, and compiling C to RISC-V."
+      },
+      {
+       "n": 5,
+       "title": "Loads, Stores & the Memory Model",
+       "summary": "Load and store instructions, addressing patterns, alignment, FENCE and memory ordering, and endianness."
+      },
+      {
+       "n": 6,
+       "title": "The Toolchain in Practice",
+       "summary": "Toolchain install, assembling and linking, linker scripts, QEMU, GDB, and a first bare-metal program."
+      }
+     ]
+    },
+    {
+     "part": "Part II: User-Mode Extensions",
+     "chapters": [
+      {
+       "n": 7,
+       "title": "The M Extension (Multiply and Divide)",
+       "summary": "Why multiply is an extension, multiplication, division and remainder, and performance."
+      },
+      {
+       "n": 8,
+       "title": "The A Extension (Atomics)",
+       "summary": "LR/SC, atomic memory operations, aq/rl ordering, and building the spinlock later met in the kernel."
+      },
+      {
+       "n": 9,
+       "title": "The F and D Extensions (Floating Point)",
+       "summary": "IEEE 754, the FP register file, single and double precision, FCSR, and FP state at context switch."
+      },
+      {
+       "n": 10,
+       "title": "The C Extension (Compressed Instructions)",
+       "summary": "Code density, 16-bit encodings, mapping to the base ISA, and effects on alignment and branching."
+      },
+      {
+       "n": 11,
+       "title": "Zicsr, Zifencei & the Extension Landscape",
+       "summary": "CSR access instructions, the instruction fence, extension naming, profiles, and runtime discovery."
+      }
+     ]
+    },
+    {
+     "part": "Part III: Privileged Architecture",
+     "chapters": [
+      {
+       "n": 12,
+       "title": "Privilege Levels & Machine Mode",
+       "summary": "Why privilege levels exist, M/S/U modes, machine CSRs, delegation, and minimal M-mode firmware."
+      },
+      {
+       "n": 13,
+       "title": "Traps: Interrupts & Exceptions",
+       "summary": "The full trap lifecycle, mcause, mepc and mtval, and how traps are routed across privilege levels."
+      },
+      {
+       "n": 14,
+       "title": "The CLINT & Timer Interrupts",
+       "summary": "The memory-mapped CLINT, timer and software interrupts, a complete bare-metal timer example, and delegation to S-mode."
+      },
+      {
+       "n": 15,
+       "title": "Supervisor Mode",
+       "summary": "The S-mode CSR mirror, S-mode trap flow, ecall, entering S-mode from M-mode, and counter access."
+      },
+      {
+       "n": 16,
+       "title": "Virtual Memory",
+       "summary": "Sv39 three-level page tables, the translation walk, PTE flags, permission faults, satp, and the TLB with sfence.vma."
+      },
+      {
+       "n": 17,
+       "title": "The PLIC: External Interrupts",
+       "summary": "PLIC architecture and registers, the claim/complete protocol, writing a PLIC driver, and the PLIC in xv6."
+      },
+      {
+       "n": 18,
+       "title": "PMP, Boot & the SBI",
+       "summary": "Physical Memory Protection registers, matching modes and lock bit, PMP in OpenSBI, the boot path and the SBI."
+      }
+     ]
+    },
+    {
+     "part": "Part IV: xv6 on RISC-V",
+     "chapters": [
+      {
+       "n": 19,
+       "title": "xv6 Boot & First Instructions",
+       "summary": "The xv6 source tree, entry.S, M-mode setup in start.c, kernel initialisation in main.c, and common boot failures."
+      },
+      {
+       "n": 20,
+       "title": "Physical Memory Allocator",
+       "summary": "The free-list page allocator: kinit, kfree and kalloc, and why its simplicity works."
+      },
+      {
+       "n": 21,
+       "title": "Page Tables in xv6",
+       "summary": "walk, mappages, building and enabling the kernel page table, and the user address space."
+      },
+      {
+       "n": 22,
+       "title": "Traps & System Calls in xv6",
+       "summary": "The trampoline, uservec, usertrap, syscall dispatch, device interrupts, and the return to user mode."
+      },
+      {
+       "n": 23,
+       "title": "Processes",
+       "summary": "struct proc, process states and table, allocproc, fork, exec, and wait."
+      },
+      {
+       "n": 24,
+       "title": "Scheduling & Context Switching",
+       "summary": "The xv6 scheduler, swtch.S, sleep and wakeup, and why the lock protocol matters."
+      },
+      {
+       "n": 25,
+       "title": "The Dance of Privilege in xv6",
+       "summary": "A map of every privilege transition: system calls, device and timer interrupts, context switches and kernel traps."
+      },
+      {
+       "n": 26,
+       "title": "Locking & Concurrency",
+       "summary": "Race conditions, spinlocks with acquire and release, why interrupts are disabled, sleep-locks, and debugging locks."
+      },
+      {
+       "n": 27,
+       "title": "File System I: On-Disk Layout",
+       "summary": "File system layers, disk layout, the buffer cache, logging, crash recovery and transactions."
+      },
+      {
+       "n": 28,
+       "title": "File System II: Names & Descriptors",
+       "summary": "Inodes on disk and in memory, directories, pathname lookup, file descriptors and the file system calls."
+      },
+      {
+       "n": 29,
+       "title": "Device Drivers",
+       "summary": "The UART driver, the top/bottom half model, and the virtio disk driver with its descriptor rings."
+      },
+      {
+       "n": 30,
+       "title": "Pipes, Exec & the Shell",
+       "summary": "Pipe implementation, exec and ELF basics, the init process, and the xv6 shell with I/O redirection."
+      }
+     ]
+    },
+    {
+     "part": "Part V: Tying It Together",
+     "chapters": [
+      {
+       "n": 31,
+       "title": "Multicore, SMP & Per-CPU State",
+       "summary": "Multiple harts, multicore boot, inter-processor interrupts, and per-CPU state."
+      },
+      {
+       "n": 32,
+       "title": "Porting xv6 to Real Hardware",
+       "summary": "Moving from QEMU to real boards: what changes, device tree parsing, and JTAG debugging."
+      }
+     ]
+    },
+    {
+     "part": "Appendices",
+     "chapters": [
+      {
+       "n": "A",
+       "title": "RV64GC Instruction Quick Reference",
+       "summary": "RV64I and the M, A, F, D and C extensions, plus pseudo-instructions."
+      },
+      {
+       "n": "B",
+       "title": "CSR Reference Table",
+       "summary": "Machine, supervisor and user-level CSRs."
+      },
+      {
+       "n": "C",
+       "title": "xv6 System Call Reference",
+       "summary": "Process management and file system calls."
+      },
+      {
+       "n": "D",
+       "title": "Lab Setup Guide",
+       "summary": "Toolchain, QEMU and GDB setup, building xv6, and a guided GDB session."
+      },
+      {
+       "n": "E",
+       "title": "Suggested Labs & Projects",
+       "summary": "A week-by-week lab sequence from assembly basics to PMP and page-table builders."
+      }
+     ]
+    }
+   ],
+   "short": "RISC-V Architecture and XV6"
+  }
+ ]
+}

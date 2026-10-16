@@ -1,0 +1,938 @@
+{
+ "tools": [
+  {
+   "id": "xv6",
+   "name": "xv6, line by line",
+   "url": "https://xv6.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/xv6-line-by-line",
+   "relatedRepos": [
+    "https://github.com/ShowMeTheStack/xv6-riscv-labs"
+   ],
+   "tagline": "Every line of a real operating system, explained. Every claim checked against the running kernel.",
+   "glance": "An interactive commentary on all 83 files of MIT's xv6-riscv, with tours, 500 questions and 25 labs.",
+   "problem": "Students in an operating systems course read kernel code without seeing the machine state behind it. They lose track of which stack is active, which page table is loaded, whether interrupts are on and which locks are held. Stacks, the trap path and locking are the ideas they find hardest.",
+   "why": "I taught operating systems at UW-Madison and KIIT and wrote a book on RISC-V and xv6 (De Gruyter Brill, 2026). I wanted a companion where no line is left unexplained and where every statement about the kernel is checked against xv6 running on QEMU, so the text cannot drift from the code.",
+   "features": [
+    "All 83 source files of xv6-riscv (commit 06aad25), 13,249 lines; every non-blank line (11,666 of 11,666) is annotated",
+    "2,457 named symbols cross-referenced across C, RISC-V assembly, linker scripts and the Makefile; 229 glossary terms",
+    "52 guided tours with 1,009 steps, from make to the shell prompt, system calls, page faults, context switches, fork, exec and the log",
+    "Each tour step shows the hart, process, privilege mode, active stack and page table, interrupt state (982 strips) and held locks, recorded from xv6 under gdb",
+    "Three long-form concept pages: stacks; mode, stack and page table; locks",
+    "500 auto-graded questions in 20 categories and nine question types, each answer linked back into the annotated source",
+    "25 extension labs (trace, copy-on-write fork, mmap, superpages, ticket spinlocks, lockdep-lite, symbolic links, an e1000 driver with UDP sockets, and more), each with a reference solution as its own git branch",
+    "A seven-phase lab format with 305 self-checks, a debugging clinic of 142 real bugs, and 435 guided reveal steps; the labs add about 13,600 lines in 190 commits",
+    "Every reference solution passes its own test and xv6's full usertests on three harts",
+    "A validator re-checks every code reference against the pinned sources on each build"
+   ],
+   "tech": [
+    "Python static site generator",
+    "libclang for C, hand-written scanners for assembly, linker scripts and the Makefile",
+    "Vanilla JavaScript front end",
+    "GitHub Pages"
+   ],
+   "license": "Content CC BY-NC-SA 4.0; software GPL-3.0-or-later with an attribution term; xv6 itself MIT",
+   "shots": [
+    {
+     "src": "assets/tools/xv6-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/xv6-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/xv6-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "8086",
+   "name": "µSystem 8086",
+   "url": "https://8086.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/usystem-8086",
+   "tagline": "A cycle-accurate 8086/8088 computer you build chip by chip, wire by wire, in a single HTML file. Boots FreeDOS.",
+   "glance": "A browser trainer kit: wire period 8086 chips on a canvas, assemble code, and step it cycle by cycle.",
+   "problem": "Microprocessor courses teach bus cycles, address decoding, interrupts and DMA, but students rarely get to wire a real system and watch the signals. Hardware trainer kits are fixed boards with fixed chips, and a wiring mistake is hard to see.",
+   "why": "I wanted a tool that replaces the trainer kit: students get the parts instead of a finished board, and every wire carries a real logic level. Nothing about the board is declared; the address map is found by driving the student's own decode gates, so a wrong wiring shows up the way it would on an oscilloscope.",
+   "features": [
+    "CPU core is 100.00% exact on the full SingleStepTests/8088 suite: 3,007,000 cases, every documented and undocumented instruction and every undefined flag bit",
+    "Period chips placed and wired pin by pin: 8086/8088, 8284A, 8237A DMA, 8259A, 8253, 8255, SRAM/EPROM, 74LS glue logic, Hercules video, µPD765 floppy controller, XT keyboard",
+    "The PC/XT preset runs GLaBIOS from EPROM, loads the boot sector over DMA channel 2 and boots FreeDOS 1.3",
+    "Twenty-one preset boards, from a ripple counter to the PC/XT; nine ship a guided lab",
+    "Design rule checks for shorts, bus contention, floating inputs and partial decode",
+    "Step by clock half-cycle or by instruction, rewind the whole machine, probe any wire, and read a waveform analyzer",
+    "A built-in 8086 assembler; turbo mode reaches real 8088 speed",
+    "An illustrated guide of 13 sections with 570 screenshots captured from the running tool; twenty colour themes",
+    "One static HTML file, no server and no install"
+   ],
+   "tech": [
+    "Vanilla JavaScript, no dependencies",
+    "Single-file build (node build.mjs)",
+    "Headless Chromium tests",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later (embeds GLaBIOS GPL-3, FreeDOS 1.3 boot disk GPL-2+)",
+   "shots": [
+    {
+     "src": "assets/tools/8086-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/8086-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/8086-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "netsim",
+   "name": "NetSim",
+   "url": "https://netsim.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/netsim",
+   "tagline": "A browser-based, client-side IPv4 network simulator for learning. Build topologies, watch real protocols run packet by packet, inspect every frame.",
+   "glance": "Build IPv4 networks in the browser, step real protocols one packet at a time, and decode every byte.",
+   "problem": "The hard parts of networking are the parts a textbook cannot show: timing, the state each device keeps, and what happens when things go wrong. A diagram of the TCP handshake does not show slow start backing off after a loss, and a static capture does not let a student pause, change one setting, and run it again.",
+   "why": "I teach computer networks and wanted Packet Tracer style topology building and Wireshark style inspection in one tool, with a clock the student controls and protocol implementations that are readable code rather than black boxes.",
+   "features": [
+    "Deterministic discrete-event engine in integer microseconds, run in a Web Worker; play, run until quiet, step one event or one packet",
+    "Byte-accurate packet codecs; a sniffer on any link, layered decode with hex highlighting, and a physical-layer view (NRZ, NRZI, Manchester)",
+    "Conditional breakpoints that stop the moment a matching packet appears",
+    "Routing with static routes, RIP, OSPF and BGP (eBGP, iBGP, route reflectors); NAT with port forwarding",
+    "TCP with Tahoe, Reno, NewReno, CUBIC and SACK, with congestion window and sequence charts",
+    "DHCP, a real DNS hierarchy with a recursive resolver, and HTTP with a request waterfall",
+    "Switches with MAC learning and 802.1Q VLANs; switch logic can be replaced by sandboxed user JavaScript",
+    "802.11-style wireless with carrier sense, backoff, RTS/CTS and the hidden-node problem",
+    "Real C socket programs compiled in the browser (clang) and run on the simulated network, including fork, pthreads, select, poll and epoll",
+    "81 guided labs in 19 modules, each checked by a test that it can be completed; 40 colour themes"
+   ],
+   "tech": [
+    "TypeScript",
+    "React",
+    "Vite",
+    "Zustand",
+    "Web Worker",
+    "clang in the browser for C programs",
+    "Playwright end-to-end tests"
+   ],
+   "license": "GPL-3.0-or-later",
+   "shots": [
+    {
+     "src": "assets/tools/netsim-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/netsim-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/netsim-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "compy",
+   "name": "Compy",
+   "url": "https://compy.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/compy",
+   "tagline": "A compiler you can watch: C89 through tokens, AST, types, IR, optimization passes and RISC-V, plus a language lab for automata and parsing.",
+   "glance": "A C89 to RISC-V compiler in the browser that shows every phase, plus a lab for automata and parsers.",
+   "problem": "In a compilers course the hard part is not any single algorithm. It is holding the whole pipeline in one's head and believing that each stage does what the lecture says. A listing of LR items in a textbook is inert.",
+   "why": "I wrote the whole toolchain, from the preprocessor to the register allocator to the machine simulator, for this tool, so that every intermediate result is available to draw. Students can then see the state the parser is in, with the stack and the remaining input beside it, and argue with it.",
+   "features": [
+    "A live phase bar: Source, Tokens, Preprocess, Parse, Types, IR, Optimize, Codegen, Run",
+    "A complete C89 preprocessor and hand-written recursive-descent parser; struct layouts drawn with padding (ILP32)",
+    "A typed three-address IR in the style of LLVM, shown as text or as a control-flow graph",
+    "Eight switchable optimization passes (simplify-CFG, mem2reg/SSA, inlining, constant folding, strength reduction, CSE, DCE, LICM) with before/after diffs",
+    "RISC-V RV32IM+F/D back end with naive and linear-scan register allocators, a live-interval chart and a machine stepper",
+    "Three execution engines (AST interpreter, IR interpreter, RISC-V simulator) over one checked process-memory model that catches null dereference, out-of-bounds, use-after-free, double free and leaks",
+    "A reversible debugger that steps forwards and backwards on all three engines",
+    "A language lab: regex to NFA to DFA to minimal DFA, FIRST/FOLLOW, grammar transformations, nine parsers (LL(1), LR(0), SLR, LR(1), LALR(1), Earley, CYK, operator precedence, recursive descent) and a PDA",
+    "32 compiler lessons and 19 language-lab lessons",
+    "Differential testing against clang -std=c89, and a 3,669-case end-to-end browser suite"
+   ],
+   "tech": [
+    "TypeScript",
+    "React",
+    "Vite",
+    "CodeMirror",
+    "npm workspace of nine packages",
+    "Vitest and Playwright"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/compy-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/compy-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/compy-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "baysik",
+   "name": "Baysik",
+   "url": "https://baysik.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/baysik",
+   "tagline": "A GW-BASIC and QBasic programming environment in a single HTML file.",
+   "glance": "GW-BASIC and QBasic in one browser page, with real PC screen modes, sound and a full debugger.",
+   "problem": "Beginners need a first language with an immediate, visible result, but running classic BASIC today means installing DOSBox and finding an old interpreter. Old interpreters also give a learner little help in seeing what a program is doing.",
+   "why": "I learned to program on Logo and then BASIC, and wanted something I could hand to a child, a student, or an old hand without asking anyone to install anything. I also wanted a debugger that shows every frame of a recursion and lets the learner change any value.",
+   "features": [
+    "One combined language: all of QBasic 1.1 plus GW-BASIC line-numbered features and some QuickBASIC extras",
+    "Every QBasic screen mode at its real resolution and colour limits (SCREEN 0 to 13), drawn with the IBM ROM fonts",
+    "PC speaker sound through Web Audio, with the full Music Macro Language for PLAY",
+    "A debugger with breakpoints, conditional breakpoints, step into/over/out, and editing of variables in any stack frame",
+    "A GW-BASIC classic console with LIST, RUN, RENUM, AUTO and soft keys",
+    "A DOS-style disk in the browser, plus optional mounting of a real folder with read-only, ask, or write permission",
+    "527 hand-written, commented programs in 21 categories",
+    "A 57-lesson tutorial in 16 units, guided tours and a language reference with runnable examples",
+    "Compiler to bytecode plus a virtual machine, so a program can pause between any two statements"
+   ],
+   "tech": [
+    "Vanilla JavaScript, no framework or dependencies",
+    "Single-file build of about 2 MB",
+    "Headless Chrome end-to-end tests",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/baysik-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/baysik-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/baysik-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "lohgo",
+   "name": "Lohgo",
+   "url": "https://lohgo.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/lohgo",
+   "tagline": "A Logo programming studio in one HTML file: turtle graphics, a debugger that walks through recursion, 68 lessons and 504 example programs.",
+   "glance": "A Berkeley Logo compatible studio in the browser, with turtle graphics and a recursion-aware debugger.",
+   "problem": "Recursion is where many learners get stuck, and Logo is where many first meet it. Without a way to see each waiting copy of a procedure, recursion stays abstract.",
+   "why": "Logo was my first language. I wanted a studio I could hand to a child, to a student meeting recursion for the first time, or to someone who remembers the turtle from an Apple II, with nothing to install and a debugger that shows every active frame.",
+   "features": [
+    "Follows Berkeley Logo (UCBLogo), including its error wording, so books written for it work",
+    "375 primitives, each with a reference page and a runnable example",
+    "Turtle, colour and event commands from MSWLogo/FMSLogo, and multiple turtles from LCSI Logo",
+    "A debugger with breakpoints, conditional breakpoints and stepping; the call stack shows every waiting procedure with its own inputs, and values can be edited",
+    "A classic command center (listener) with history and completion",
+    "504 commented programs in 21 categories",
+    "A course of 68 lessons in 16 units, ending with building a game",
+    "Files on a browser disk, PNG export, and phone and tablet layouts"
+   ],
+   "tech": [
+    "Vanilla JavaScript, no framework or dependencies",
+    "Single-file build",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/lohgo-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/lohgo-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/lohgo-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "see",
+   "name": "See",
+   "url": "https://see.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/see",
+   "tagline": "A C89 workbench in the browser. Compile, run and step through C, and watch the stack, the heap and every pointer at real addresses.",
+   "glance": "A C89 compiler and debugger in the browser that draws the stack, heap and pointers at real addresses.",
+   "problem": "The hardest part of learning C is not syntax. It is the picture in the head: where a variable lives, what a pointer holds, why char s[] = \"hi\" can be changed and char *p = \"hi\" cannot, and what free does to a pointer that still holds the address.",
+   "why": "I have taught C for many years and wanted a tool that draws that picture for every program, from real bytes rather than a diagram made for the occasion, with no install, server or account.",
+   "features": [
+    "Its own C89 compiler, linker and C library, running on a simulated 32-bit machine laid out like classic Unix (code at 0x08048000, stack down from 0xc0000000, i386 calling convention)",
+    "A memory picture of every stack frame, heap block, global, string literal and function, with arrows from every pointer",
+    "Stepping backwards (F8): memory, heap, frames, input and output all return to their earlier state",
+    "Every load and store is checked; null dereference, out-of-bounds, use-after-free, double free, writes to read-only data, stack overflow and dangling pointers are stopped and explained",
+    "gcc -Wall style warnings, including printf/scanf format mismatches",
+    "Watchpoints, conditional breakpoints, a hover card with the line that last wrote a value, and a raw bytes view",
+    "100 lessons in 15 units, and more than 600 commented programs in 22 categories including a find-the-bug section",
+    "A full C89 library reference, multi-file projects with real linking, and share links that carry the whole project",
+    "Phone and tablet layouts"
+   ],
+   "tech": [
+    "Vanilla JavaScript, no framework or dependencies",
+    "Single-file build",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/see-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/see-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/see-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "strux",
+   "name": "Strux",
+   "url": "https://strux.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/strux",
+   "tagline": "Data structures and algorithms in C89, animated from real running code.",
+   "glance": "175 data structure and algorithm topics, each a real C89 function animated line by line.",
+   "problem": "Students rarely struggle with the idea of a linked list or a heap. They struggle with the moment: which pointer changes first, what is lost if the order is wrong, why a deleted slot in a hash table must not look empty. A whiteboard shows only the before and the after.",
+   "why": "I have taught data structures for many years and wanted to show every step in between, forwards and backwards, drawn from the memory of the real program rather than from a hand-made animation.",
+   "features": [
+    "175 topics in ten groups: arrays, linked lists, stacks and queues, searching, sorting, hashing, trees, balanced trees (AVL, red-black, B, B+, splay, treap), heaps and tries, graphs",
+    "Runs on See's C89 compiler and 32-bit machine; the picture is drawn from program memory after every line",
+    "A narration sentence for each step with the actual numbers, and counters for comparisons, swaps, moves, pointer steps, mallocs and frees",
+    "Memory and Calls tabs, including the recursion tree of every call made so far",
+    "Prediction questions at key moments, and a 4 to 6 question quiz per topic",
+    "Compare mode runs two topics side by side on the same data",
+    "Courses that order topics, and a graph editor for drawing one's own graph",
+    "Projector mode, dark and light themes, and phone and tablet layouts"
+   ],
+   "tech": [
+    "Vanilla JavaScript",
+    "See's C89 compiler and simulated machine",
+    "Single-file build",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/strux-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/strux-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/strux-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "kwery",
+   "name": "Kwery",
+   "url": "https://kwery.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/kwery",
+   "tagline": "A relational database you can see into, from SQL down to the pages.",
+   "glance": "A database engine in the browser with the layers of a real one, and a view into each: plans, pages, the buffer pool, indexes, locks, the log and recovery, and a simulated cluster.",
+   "problem": "Students learn SQL quickly. What they struggle with is everything a real database hides: why the optimizer chose a hash join, what a dirty page is, why one transaction waits and another does not, what happens to the log on restart.",
+   "why": "I teach the database course and wanted every one of those ideas shown on a real engine, one step at a time, on data small enough to follow and large enough to matter.",
+   "features": [
+    "SQL in PostgreSQL's dialect, its answers tested against PostgreSQL 17 on more than five thousand statements",
+    "A cost-based optimizer, pipelined executor, B+ tree, hash, bitmap, LSM and R-tree indexes, a buffer manager over slotted pages, MVCC with locks, a write-ahead log and ARIES recovery",
+    "Views of the plan with its cost formulas, the pages and tuples, the buffer pool, every index structure, the waits-for graph and the log, all recorded so a run can be stepped backwards",
+    "Concurrency protocols from two-phase locking to serializable snapshot isolation, schedules with their precedence graphs, and crashes with a basic or ARIES restart",
+    "An E-R editor in three notations, functional dependencies and normal forms, and relational algebra and calculus",
+    "A simulated cluster: partitioning, replication, two- and three-phase commit, Raft, distributed queries and MapReduce",
+    "Lessons for all 26 chapters of the course, over four hundred exercises checked by running them on altered copies of the data, and guided tours",
+    "Original sample databases (Theatre, a credit union, a software studio and more), dark and light themes, and phone layouts"
+   ],
+   "tech": [
+    "Vanilla JavaScript",
+    "A database engine written for the purpose",
+    "Single-file build",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/kwery-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/kwery-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/kwery-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "tooring",
+   "name": "Tooring",
+   "url": "https://tooring.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/tooring",
+   "tagline": "Theory of computation you can play with, from automata to NP-completeness.",
+   "glance": "Every construction in the theory of computation, animated step by step on the student's own input: automata, regular expressions, grammars, every kind of parser, Turing machines, undecidability and NP-completeness.",
+   "problem": "Students find the theory of computation dry. They can recite the subset construction or the pumping lemma, but they never see it happen: which states an NFA is in after the third symbol, why a pair is marked in round two, what the diagonal machine does with its own description.",
+   "why": "I teach the course and wanted every proof and construction acted out on screen, forwards and backwards, on any input a student types.",
+   "features": [
+    "206 topics in seven parts, each with its own picture and a sentence per step with the actual states and symbols",
+    "Engines written for the purpose: finite automata and regular expressions, normal forms, CYK, Earley, LL(1) and the whole LR family, pushdown automata, Turing machines and their variants, register machines, recursive functions and the lambda calculus",
+    "Editors for automata, PDAs, Turing machines, expressions and grammars, with conversions, minimisation and comparison that finds a counterexample",
+    "Games: the pumping lemmas, Myhill–Nerode, PCP dominoes, tilings, busy beavers and reductions built as gadgets",
+    "The halting problem, Rice's theorem, Cook–Levin and the classic NP-complete reductions acted out on screen",
+    "140 lessons and 528 exercises checked automatically, with hints, plus guided tours and courses",
+    "Predictions before each step, dark and light themes, phone and projector layouts"
+   ],
+   "tech": [
+    "Vanilla JavaScript",
+    "Formal-language engines written for the purpose",
+    "Single-file build",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/tooring-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/tooring-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/tooring-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "sirkit",
+   "name": "Sirkit",
+   "url": "https://sirkit.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/sirkit",
+   "tagline": "Digital design you can build, run and see inside, from gates to a small processor.",
+   "glance": "A digital design course and workbench in the browser: a circuit editor with a real simulator, K-maps and Boolean algebra you work by hand, state machines, Verilog, a breadboard with 74-series chips, and a small processor.",
+   "problem": "Students can draw an AND gate and write a truth table on day one. What stays abstract is everything between the inputs and the outputs: why a K-map group is not prime, why a flip-flop changes only at the edge, why a ripple adder is slow, why a glitch appears on a wire that should stay at 1.",
+   "why": "I teach digital design and wanted every wire to show its value, every gate to take its time, and every step of minimisation and state machine design to be something students do and the tool checks.",
+   "features": [
+    "A drag-and-drop circuit editor: every part's parameters editable, an event-driven simulator with 0, 1, X and Z, gate delays, setup and hold checks, and waveforms",
+    "Technology presets (CMOS, TTL, LS-TTL, FPGA-like), static timing and the critical path",
+    "A function workbench: truth tables, SOP and POS, K-maps up to six variables that students circle and the tool checks, Quine-McCluskey, and algebraic proofs step by step",
+    "State machine design from word problem to circuit, ASM charts, asynchronous circuits and hazards",
+    "Verilog-2005 with testbenches, checked against a reference simulator, synthesised to drawn circuits",
+    "A breadboard lab bench with 74-series chips, a logic analyser and bench experiments",
+    "Switch-level CMOS, logic families, and a small processor with hard-wired and microprogrammed control",
+    "200 animated topics, about 150 lessons and over 500 exercises checked automatically, with tours and courses"
+   ],
+   "tech": [
+    "Vanilla JavaScript",
+    "A logic simulator and Verilog compiler written for the purpose",
+    "Single-file build",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/sirkit-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/sirkit-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/sirkit-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "sifer",
+   "name": "Sifer",
+   "url": "https://sifer.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/sifer",
+   "tagline": "Cryptography you can see inside, from the Enigma to post-quantum schemes.",
+   "glance": "Every cipher, hash, curve and protocol opened up in the browser: every intermediate value drawn, data flowing along wires, toy and real sizes side by side, and every engine checked against the published test vectors.",
+   "problem": "Students meet cryptography as formulas and black boxes: AES encrypts, RSA is hard, a signature verifies. What they never see is the state after each round, why a bit flip spreads, why a nonce must never repeat, or what makes one parameter choice safe and another fatal.",
+   "why": "Cryptography is my doctoral advisor's field and close to my own research on side channels. I wanted every value on the screen and every security rule shown with the reason it exists.",
+   "features": [
+    "15 parts from classical ciphers and the Enigma through number theory, stream and block ciphers, modes, RSA, discrete logarithms, elliptic curves, signatures, hashes, MACs and protocols, post-quantum schemes and secure implementation",
+    "Engines written for the purpose that reproduce the published vectors of FIPS 197, SP 800-38A/D, FIPS 180-4, FIPS 202, FIPS 203, RFC 7748, 8032, 8439, 5869, 6979, 8448 and more, and agree with a standard library value for value",
+    "Animated topics: the AES state round by round, the DES Feistel ladder, the ChaCha quarter-round, SHA-256 and Keccak, curve addition, ML-KEM data flow, TLS 1.3 key schedule",
+    "Benches for ciphers and modes, number theory, public key, curves, hashes and protocols, with every intermediate value",
+    "Enigma I with its inside view and signal path, and a working Bombe that recovers the key from a crib",
+    "Lessons and auto-checked exercises, a code sandbox tested against vectors, a challenge ladder, tours and courses",
+    "Dark and light themes, phone and projector layouts"
+   ],
+   "tech": [
+    "Vanilla JavaScript",
+    "Cipher, hash, curve and lattice engines written for the purpose",
+    "Single-file build",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/sifer-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/sifer-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/sifer-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "nooral",
+   "name": "Nooral",
+   "url": "https://nooral.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/nooral",
+   "tagline": "Machine learning you can see inside, from least squares to a tiny GPT trained in the browser.",
+   "glance": "Every model opened up in the browser: boundaries forming as a model trains, trees growing split by split, attention weights and feature maps drawn, no-code workflows on a canvas, and every engine checked against scikit-learn and finite differences.",
+   "problem": "Students meet machine learning as a library call that prints a score. They can quote an accuracy, but never see the boundary behind it, the rows it got wrong, what a split, a weight or an attention head is doing, or how any of it changed during training.",
+   "why": "My students reach machine learning through libraries long before they understand what a model does. I wanted them to build and question real models without writing code first, with every intermediate value on the screen and every claim backed by the numbers the model actually produced.",
+   "features": [
+    "18 parts from data and evaluation through linear models, neighbours, trees and ensembles, SVMs, clustering and PCA, optimisation, neural networks, CNNs, sequences, transformers and language models, to generative models, reinforcement learning, graph networks, robustness and privacy, and practice",
+    "A no-code workflow canvas: datasets, splits, preprocessing, 19 models, training, evaluation and comparison, with confusion matrices whose cells list the very rows",
+    "Its own tensor library with reverse-mode autodiff, WebGPU kernels and a CPU fallback, training in Web Workers",
+    "A text lab that tokenises with BPE and trains a small GPT in the browser, with attention and sampling visible",
+    "Animated topics with a sentence under every step giving the actual values, checked against the engines",
+    "Lessons, auto-checked exercises, model challenges on hidden test sets, tours and courses",
+    "Dark and light themes, phone and projector layouts"
+   ],
+   "tech": [
+    "Vanilla JavaScript",
+    "Tensor, autodiff and model engines written for the purpose",
+    "WebGPU and WebAssembly",
+    "Single-file build",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/nooral-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/nooral-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/nooral-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "proses",
+   "name": "Proses",
+   "url": "https://proses.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/proses",
+   "tagline": "Operating systems you can see inside: every mechanism a small machine you set up, run a step at a time and break.",
+   "glance": "Processes, scheduling, synchronisation, deadlocks, memory, storage and file systems as live machines in the browser: real C programs on a simulated kernel, a model checker that finds the failing schedule, and every number checked against the engines.",
+   "problem": "Students meet operating systems as definitions and diagrams that never move. They can recite the states of a process or the rows of the banker's algorithm, but rarely watch one happen, and a fork program that prints in a surprising order stays a puzzle.",
+   "why": "I teach operating systems at KIIT and taught it before as a teaching assistant at UW-Madison. I wanted every mechanism to run, with every input the student's to change, as the concept-level companion to xv6, line by line.",
+   "features": [
+    "18 parts from the hardware boundary through processes, IPC and signals, threads, scheduling, multicore and real time, synchronisation, the classic problems, deadlocks, main and virtual memory, storage, I/O, file systems, distributed file systems, protection (taught defensively) and virtual machines",
+    "Ten labs: Process, Shell, Scheduler, Sync, Deadlock, Memory, Virtual memory, Storage, File system and VM, each with typed input, presets and share links",
+    "Real C programs run on an interpreter and simulated kernel: fork trees, zombies and orphans, pipes, signals, threads, and every output a program can print, checked against programs compiled and run on a real machine",
+    "A model checker that searches every schedule of a student's own synchronisation code and replays the shortest failing one or a starvation cycle",
+    "Animated topics with a sentence under every step giving the actual values, each checked against the engines",
+    "Lessons, auto-checked exercises, challenges with hidden tests, tours and courses",
+    "Dark and light themes, phone and projector layouts"
+   ],
+   "tech": [
+    "Vanilla JavaScript",
+    "A C interpreter, simulated kernel, model checker and OS engines written for the purpose",
+    "Web Workers",
+    "Single-file build",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/proses-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/proses-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/proses-3.jpg",
+     "caption": ""
+    }
+   ]
+  },
+  {
+   "id": "arkitek",
+   "name": "Arkitek",
+   "url": "https://arkitek.jyotiprakash.org",
+   "live": true,
+   "repo": "https://github.com/ShowMeTheStack/arkitek",
+   "tagline": "Computer organization you can see inside, from an instruction's bits to pipelines, caches and GPUs.",
+   "glance": "Every part of a computer as a small machine in the browser: instructions clicked apart bit by bit, adders, multipliers, dividers and floating-point units stepping, datapaths lit wire by wire, pipelines stalling on hazards, caches filling as your own RISC-V program runs, and control units you design and test with a logic analyser.",
+   "problem": "Students meet computer organization as block diagrams that never move. They can draw the five pipeline stages or the fields of a cache address, but rarely watch an instruction flow through a datapath, a carry ripple through an adder, or a miss turn out to be a conflict miss.",
+   "why": "I teach this course at KIIT and the whiteboard runs out of room: I can draw one cycle or one Booth step, but the interesting part is the next forty cycles, or what changes when forwarding is turned off. I wanted every unit to run, with every input the student's to change and every value checked against real tools.",
+   "features": [
+    "23 parts from abstractions and performance through the RISC-V instruction set, the toolchain, number representations, every adder, the ALU, every multiplier and divider and full IEEE 754, bus-based and multi-stage datapaths on a teaching ISA of its own, control-unit design, the RISC-V datapath, pipelining, hazards and ILP, caches, virtual memory, parallel processors and GPUs",
+    "21 labs, among them an Instruction lab, a Toolchain lab, Adder, Multiplier, Divider and Floating-point labs, Datapath, Pipeline and Multiple-issue labs, a Cache lab and a Control-unit studio with a logic analyser",
+    "A RISC-V RV64IMAFD simulator with vectors and privileged modes, checked commit by commit against spike and the official riscv-tests, and an assembler and linker checked against the GNU toolchain",
+    "Floating point in any format and every rounding mode, bit-exact against Berkeley TestFloat",
+    "Animated topics with a sentence under every step giving the actual values, each checked against the engines",
+    "Lessons, auto-checked exercises, challenges with hidden tests, tours and courses",
+    "Dark and light themes, phone and projector layouts"
+   ],
+   "tech": [
+    "Vanilla JavaScript",
+    "RISC-V, Arka, arithmetic, pipeline, cache and GPU engines written for the purpose",
+    "Single-file build",
+    "GitHub Pages"
+   ],
+   "license": "GPL-3.0-or-later with an attribution term",
+   "shots": [
+    {
+     "src": "assets/tools/arkitek-1.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/arkitek-2.jpg",
+     "caption": ""
+    },
+    {
+     "src": "assets/tools/arkitek-3.jpg",
+     "caption": ""
+    }
+   ]
+  }
+ ],
+ "online": {
+  "youtube": {
+   "name": "Jyotiprakash Mishra CS",
+   "url": "https://www.youtube.com/@jyotiprakashmishracs",
+   "channelId": "UCmT9Kb5cpa9fIN-8daDRqwQ",
+   "subscribers": "3.11K (channel page, Oct 2026)",
+   "videos": 78,
+   "views": 437000,
+   "about": "Full undergraduate lecture courses taught at KIIT, freely available.",
+   "series": [
+    {
+     "name": "Operating Systems",
+     "examples": [
+      "Introduction to Operating Systems",
+      "Processes",
+      "Process Creation",
+      "Process Scheduling",
+      "Process Synchronization"
+     ],
+     "exampleUrl": "https://www.youtube.com/watch?v=W40WaMQOKKs"
+    },
+    {
+     "name": "Computer Networks",
+     "examples": [
+      "Introduction to Network Layer & IP Addresses",
+      "Link State Routing - Dijkstra",
+      "Distance Vector Routing - Bellman Ford",
+      "Introduction to Data Link Layer",
+      "ARP and Introduction to Ethernet",
+      "NAT",
+      "DHCP",
+      "ICMP"
+     ],
+     "exampleUrl": "https://www.youtube.com/watch?v=5Z-e4X19YTU"
+    },
+    {
+     "name": "Data Structures and Algorithms",
+     "examples": [
+      "Why and what of DSA? Part 1",
+      "DSA: Introduction to Arrays",
+      "DSA: Linked Lists - Part 1",
+      "DSA: Basics of Recursion, Pointers, and Dynamic Allocation"
+     ],
+     "exampleUrl": "https://www.youtube.com/watch?v=dCRMAhjHcmE"
+    }
+   ],
+   "glance": "Full undergraduate courses on operating systems, computer networks and data structures, free.",
+   "description": "Full undergraduate lecture courses taught at KIIT, freely available.",
+   "playlists": [
+    "Operating Systems",
+    "Computer Networks",
+    "Data Structures and Algorithms"
+   ],
+   "subs": "3.11K"
+  },
+  "blog": {
+   "url": "https://blog.jyotiprakash.org",
+   "name": "Jyotiprakash's Blog",
+   "covers": "Long-form articles on computer science fundamentals and systems: C programming, operating systems, computer architecture, networking, Java and Spring Boot, plus occasional physics and quantum computing. Running for about three years.",
+   "sections": [
+    "C Programming",
+    "Intro to OS"
+   ],
+   "notablePosts": [
+    {
+     "title": "Quantum Computers, From First Principles: What They Are and What They Provably Run Faster",
+     "date": "2026-08-30",
+     "url": "https://blog.jyotiprakash.org/quantum-computers-from-first-principles-what-they-are-and-what-they-provably-run-faster"
+    },
+    {
+     "title": "Why Energy and Momentum Are Conserved: Noether's Theorem, Derived by Hand",
+     "date": "2026-08-10",
+     "url": "https://blog.jyotiprakash.org/why-energy-and-momentum-are-conserved-noether-s-theorem-derived-by-hand"
+    },
+    {
+     "title": "Computer Arithmetic: From Fast Adders to Floating-Point",
+     "date": "2026-02-12",
+     "url": "https://blog.jyotiprakash.org/computer-arithmetic-from-fast-adders-to-floating-point"
+    },
+    {
+     "title": "The Complete Memory Hierarchy: From Semiconductor RAM to Virtual Memory",
+     "date": "2026-01-07",
+     "url": "https://blog.jyotiprakash.org/the-complete-memory-hierarchy-from-semiconductor-ram-to-virtual-memory"
+    },
+    {
+     "title": "The Ultimate Spring Boot Guide: From Fundamentals to Production-Ready REST APIs",
+     "date": "2025-12-26",
+     "url": "https://blog.jyotiprakash.org/the-ultimate-spring-boot-guide-from-fundamentals-to-production-ready-rest-apis"
+    },
+    {
+     "title": "Understanding Functions, Memory, and Pointers in C: A Complete Guide",
+     "date": "2025-12-16",
+     "url": "https://blog.jyotiprakash.org/understanding-functions-memory-and-pointers-in-c-a-complete-guide"
+    },
+    {
+     "title": "Datapath and Control",
+     "date": "2025-12-10",
+     "url": "https://blog.jyotiprakash.org/datapath-and-control"
+    },
+    {
+     "title": "Demystifying Instruction Set Architecture",
+     "date": "2025-12-03",
+     "url": "https://blog.jyotiprakash.org/demystifying-instruction-set-architecture"
+    },
+    {
+     "title": "Socket Programming in Java: Understanding TCP Communication",
+     "date": "2026-08-06",
+     "url": "https://blog.jyotiprakash.org/socket-programming-in-java-understanding-tcp-communication"
+    }
+   ],
+   "description": "Long-form articles on computer science fundamentals and systems: C programming, operating systems, computer architecture, networking, Java and Spring Boot, plus occasional physics and quantum computing. Running for about three years.",
+   "posts": [
+    {
+     "title": "Quantum Computers, From First Principles: What They Are and What They Provably Run Faster",
+     "date": "2026-08-30",
+     "url": "https://blog.jyotiprakash.org/quantum-computers-from-first-principles-what-they-are-and-what-they-provably-run-faster"
+    },
+    {
+     "title": "Why Energy and Momentum Are Conserved: Noether's Theorem, Derived by Hand",
+     "date": "2026-08-10",
+     "url": "https://blog.jyotiprakash.org/why-energy-and-momentum-are-conserved-noether-s-theorem-derived-by-hand"
+    },
+    {
+     "title": "Computer Arithmetic: From Fast Adders to Floating-Point",
+     "date": "2026-02-12",
+     "url": "https://blog.jyotiprakash.org/computer-arithmetic-from-fast-adders-to-floating-point"
+    },
+    {
+     "title": "The Complete Memory Hierarchy: From Semiconductor RAM to Virtual Memory",
+     "date": "2026-01-07",
+     "url": "https://blog.jyotiprakash.org/the-complete-memory-hierarchy-from-semiconductor-ram-to-virtual-memory"
+    },
+    {
+     "title": "The Ultimate Spring Boot Guide: From Fundamentals to Production-Ready REST APIs",
+     "date": "2025-12-26",
+     "url": "https://blog.jyotiprakash.org/the-ultimate-spring-boot-guide-from-fundamentals-to-production-ready-rest-apis"
+    },
+    {
+     "title": "Understanding Functions, Memory, and Pointers in C: A Complete Guide",
+     "date": "2025-12-16",
+     "url": "https://blog.jyotiprakash.org/understanding-functions-memory-and-pointers-in-c-a-complete-guide"
+    },
+    {
+     "title": "Datapath and Control",
+     "date": "2025-12-10",
+     "url": "https://blog.jyotiprakash.org/datapath-and-control"
+    },
+    {
+     "title": "Demystifying Instruction Set Architecture",
+     "date": "2025-12-03",
+     "url": "https://blog.jyotiprakash.org/demystifying-instruction-set-architecture"
+    },
+    {
+     "title": "Socket Programming in Java: Understanding TCP Communication",
+     "date": "2026-08-06",
+     "url": "https://blog.jyotiprakash.org/socket-programming-in-java-understanding-tcp-communication"
+    }
+   ],
+   "glance": "Long-form writing on C, operating systems, architecture, networks and more."
+  },
+  "linkedin": {
+   "url": "https://www.linkedin.com/in/mishrajp88/"
+  },
+  "github": {
+   "org": "ShowMeTheStack",
+   "url": "https://github.com/ShowMeTheStack",
+   "publicRepos": [
+    {
+     "name": "see",
+     "description": "See: a C89 workbench in the browser. Compile, run and step through C, and watch the stack, the heap and every pointer at real addresses."
+    },
+    {
+     "name": "lohgo",
+     "description": "A Logo programming studio in one HTML file: turtle graphics, a debugger that walks through recursion, 68 lessons and 504 example programs. Berkeley Logo compatible."
+    },
+    {
+     "name": "baysik",
+     "description": "A GW-BASIC and QBasic programming environment in a single HTML file. Every PC screen mode, PC speaker music, a debugger that edits variables in any stack frame, a 57-lesson tutorial and 527 example programs."
+    },
+    {
+     "name": "strux",
+     "description": "Data structures and algorithms in C89, animated from real running code"
+    },
+    {
+     "name": "netsim",
+     "description": "A browser-based, client-side IPv4 network simulator for learning. Build topologies on a canvas, watch real protocols run packet by packet, and inspect every frame."
+    },
+    {
+     "name": "xv6H",
+     "description": "A RISC-V Type-1 hypervisor grown from xv6, whose guests can be told that their machine has changed"
+    },
+    {
+     "name": "compy",
+     "description": "Compy: a compiler you can watch. C89 through tokens, AST, types, IR, optimization passes and RISC-V, plus a language lab for automata and parsing, all in the browser."
+    },
+    {
+     "name": "ternary-sigma-delta",
+     "description": ""
+    },
+    {
+     "name": "xv6-line-by-line",
+     "description": "Every line of xv6-riscv explained and cross-referenced: 52 guided tours with the machine state at every step, 500 self-graded questions and 25 extension labs."
+    },
+    {
+     "name": "xv6-riscv-labs",
+     "description": "Reference solutions for the 25 extension labs of xv6, line by line: one branch per lab (ext/01-trace ... ext/25-e1000), each starting from xv6-riscv commit 06aad25.",
+     "fork": true
+    },
+    {
+     "name": "usystem-8086",
+     "description": "A cycle-accurate 8086/8088 computer you build chip by chip, wire by wire, in a single HTML file. Boots FreeDOS."
+    },
+    {
+     "name": "groupshap",
+     "description": "Group-Shapley explanations under feature dependence: reproducibility package."
+    },
+    {
+     "name": "berkeley-hardfloat",
+     "description": "",
+     "fork": true
+    },
+    {
+     "name": "chess",
+     "description": ""
+    },
+    {
+     "name": "checkers",
+     "description": ""
+    },
+    {
+     "name": "2048",
+     "description": ""
+    },
+    {
+     "name": "sanjs-ludo",
+     "description": ""
+    },
+    {
+     "name": "cprogslides",
+     "description": ""
+    },
+    {
+     "name": "BasicCPUScheduler",
+     "description": "A basic CPU scheduler that demonstrates to undergraduate students how algorithms like FCFS, SJF, Priority and Round-robin work for short-term process scheduling."
+    }
+   ]
+  },
+  "facultyProfiles": [
+   "https://cse.kiit.ac.in/profiles/jyotiprakash-mishra/",
+   "https://faculty.kiit.ac.in/jyotiprakash-mishra"
+  ]
+ },
+ "apps": [],
+ "company": {
+  "name": "ENineHQ Technologies Pvt. Ltd.",
+  "url": "https://eninehq.com",
+  "founded": 2022,
+  "role": "Co-founder and CEO (Founder & CEO on the website)",
+  "what": "An engineering company with three verticals: hardware engineering (custom silicon and RISC-V), clinical healthcare software, and security research. The website states that it builds its own work and is not a consultancy that outsources.",
+  "verticals": [
+   {
+    "name": "Hardware Engineering",
+    "items": [
+     "Custom RISC-V cores",
+     "FPGA prototyping",
+     "Hardware security and side-channel analysis",
+     "SoC integration and verification"
+    ]
+   },
+   {
+    "name": "Healthcare Software",
+    "items": [
+     "Electronic health records for ambulatory and OPD settings",
+     "Pharmacy management",
+     "Laboratory information systems",
+     "Patient-facing mobile and web apps"
+    ]
+   },
+   {
+    "name": "Security Research",
+    "items": [
+     "Security training and workshops",
+     "Tooling guidance",
+     "Research publication support",
+     "Threat modeling and architecture review"
+    ]
+   }
+  ],
+  "alsoDoes": "Develops and publishes consumer software for Android: utilities, emulators and learning apps (per CV).",
+  "advisor": "Prof. Sanjay K. Sahay (BITS Pilani), Chief Advisor",
+  "products": []
+ }
+}
